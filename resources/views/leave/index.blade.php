@@ -49,7 +49,9 @@
                                             <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium">Decline</button>
                                         </form>
                                     @endif
-                                    <a href="{{ route('leave.edit', ['dptid' => $dptid, 'leave' => $leave]) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Edit</a>
+                                    @if ($leave->status->value !== 'approved')
+                                        <a href="{{ route('leave.edit', ['dptid' => $dptid, 'leave' => $leave]) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Edit</a>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

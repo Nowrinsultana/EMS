@@ -25,6 +25,7 @@ class LeaveController extends Controller
     public function edit(Request $request, $dptid, Leave $leave): View
     {
         abort_if((int) $leave->department_id !== (int) $dptid, 404);
+        abort_if($leave->status === LeaveStatus::Approved, 403);
 
         return view('leave.edit', compact('leave', 'dptid'));
     }
@@ -32,6 +33,7 @@ class LeaveController extends Controller
     public function update(Request $request, $dptid, Leave $leave): RedirectResponse
     {
         abort_if((int) $leave->department_id !== (int) $dptid, 404);
+        abort_if($leave->status === LeaveStatus::Approved, 403);
 
         $oldStatus = $leave->status;
         $oldStartDate = $leave->start_date->format('Y-m-d');
