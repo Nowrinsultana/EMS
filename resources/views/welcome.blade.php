@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roster — Employee management, without the spreadsheets</title>
+<title>PALINDROM — Employee Management System</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
@@ -589,9 +589,9 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <div>
-        <span class="eyebrow">● Live across 40,000 desks</span>
-        <h1 class="hero-title">Your whole team,<br>on <em>one roster.</em></h1>
-        <p class="hero-sub">Schedules, time tracking, and payroll for teams who've outgrown spreadsheets — and don't have patience for software that fights back.</p>
+        <span class="eyebrow">● Employee Management System</span>
+        <h1 class="hero-title">Manage your workforce<br>with <em>PALINDROM.</em></h1>
+        <p class="hero-sub">Departments, employees, attendance, leave, and payroll — all in one place. Built for teams who need structure without the complexity.</p>
         <div class="hero-actions">
           <a href="{{ route('register') }}" class="btn btn-primary btn-lg">Start free trial</a>
           <a href="{{ route('jobs.list') }}" class="btn btn-ghost btn-lg">View open positions</a>
@@ -600,13 +600,13 @@
           <div class="avatar-stack">
             <span></span><span></span><span></span><span></span>
           </div>
-          <span class="hero-note">Trusted by ops teams at 2,800+ companies</span>
+          <span class="hero-note">Used by departments of all sizes</span>
         </div>
       </div>
 
       <div class="board" id="board">
         <div class="board-head">
-          <span class="title">Today's roster — Downtown branch</span>
+          <span class="title">Today's attendance — Downtown branch</span>
           <span class="synced" id="synced">synced 0s ago</span>
         </div>
 
@@ -673,39 +673,39 @@
       <div class="section-head">
         <span class="section-tag">What it does</span>
         <h2 class="section-title">Everything between hiring and paying, in one place.</h2>
-        <p class="section-desc">Roster replaces the spreadsheet, the group chat, and the three other tools you were duct-taping together.</p>
+        <p class="section-desc">PALINDROM brings departments, employees, attendance, leave, and payroll together — no more jumping between tools.</p>
       </div>
 
       <div class="feature-grid">
         <div class="feature">
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3.5a4 4 0 110 8 4 4 0 010-8zM2 20.5c0-4 3-7 6-7s6 3 6 7M14 13.5c2.5 0 5 2.5 5 6"/></svg></div>
-          <h3>Team directory</h3>
-          <p>Every employee's role, pay rate, documents, and history — searchable in seconds, not buried in folders.</p>
+          <h3>Employee directory</h3>
+          <p>Every staff member's role, contact, documents, and leave history — searchable in seconds.</p>
         </div>
         <div class="feature">
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg></div>
-          <h3>Scheduling</h3>
-          <p>Build shifts by dragging, not typing. Conflicts and overtime get flagged before they happen, not after.</p>
+          <h3>Leave management</h3>
+          <p>Request, approve, or decline time off in one click. Leave balances update automatically as approvals roll in.</p>
         </div>
         <div class="feature">
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
-          <h3>Time tracking</h3>
-          <p>Clock in from a phone, a tablet at the door, or a browser. Hours land in payroll without a spreadsheet in between.</p>
+          <h3>Attendance tracking</h3>
+          <p>QR code check-in and check-out. Daily logs, monthly summaries, and real-time status at a glance.</p>
         </div>
         <div class="feature">
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h11"/></svg></div>
           <h3>Payroll</h3>
-          <p>Wages, tax filings, and direct deposits run on the hours your team actually worked — calculated automatically.</p>
+          <p>Basic salaries, adjustments, and payslips — calculated per cycle. Everything flows from a single source of truth.</p>
         </div>
         <div class="feature">
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5 5.5.8-4 4 1 5.4L12 15.7 6.9 18.2l1-5.4-4-4 5.5-.8L12 3z"/></svg></div>
-          <h3>Performance</h3>
-          <p>Reviews, goals, and one-on-one notes in the same place as the schedule — context that doesn't get lost in email.</p>
+          <h3>Recruitment</h3>
+          <p>Post vacancies, accept applications, schedule interviews — all within the same system your team already uses.</p>
         </div>
         <div class="feature">
           <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M4 19V9.5l5-4 5 4V19M14 19V13h5v6"/></svg></div>
-          <h3>Reporting</h3>
-          <p>Labor cost, attendance, turnover — by location or by role, exportable whenever finance asks for it.</p>
+          <h3>Multi-department</h3>
+          <p>Superusers oversee everything. Department admins manage their own teams. Staff access their own records. No overlap.</p>
         </div>
       </div>
     </div>
@@ -715,29 +715,29 @@
     <div class="wrap">
       <div class="section-head">
         <span class="section-tag">Getting set up</span>
-        <h2 class="section-title">Live in an afternoon, not a quarter.</h2>
-        <p class="section-desc">No implementation team required. Most teams are fully running by their first scheduled shift.</p>
+        <h2 class="section-title">Set up in minutes, not months.</h2>
+        <p class="section-desc">Create departments, add employees, and go live. No training sessions or onboarding calls needed.</p>
       </div>
       <div class="flow-steps">
         <div class="flow-step">
           <span class="num">01</span>
-          <h3>Add your team</h3>
-          <p>Import from a spreadsheet or your old system in one upload. No manual re-entry.</p>
+          <h3>Create departments</h3>
+          <p>Set up departments and assign admins. Each department operates independently with its own staff and data.</p>
         </div>
         <div class="flow-step">
           <span class="num">02</span>
-          <h3>Set schedules</h3>
-          <p>Build the week's shifts once. Repeat patterns and time-off requests stay in sync automatically.</p>
+          <h3>Add employees</h3>
+          <p>Register staff members with roles and details. Each employee gets a secure password setup link.</p>
         </div>
         <div class="flow-step">
           <span class="num">03</span>
-          <h3>Track time</h3>
-          <p>Employees clock in from their phone. Hours flow straight into approvals — no paper timesheets.</p>
+          <h3>Manage operations</h3>
+          <p>Handle leave requests, track daily attendance via QR codes, and oversee recruitment from one dashboard.</p>
         </div>
         <div class="flow-step">
           <span class="num">04</span>
-          <h3>Pay automatically</h3>
-          <p>Approved hours become payroll. Taxes filed, deposits sent, no spreadsheet in the middle.</p>
+          <h3>Run payroll</h3>
+          <p>Set salaries, apply adjustments, and generate payslips — calculated automatically from your employee data.</p>
         </div>
       </div>
     </div>
@@ -747,20 +747,20 @@
     <div class="wrap">
       <div class="metrics">
         <div class="metric">
-          <div class="num"><span>6.4</span>hrs</div>
-          <div class="lbl">Saved per manager, per week</div>
+          <div class="num"><span>100</span>%</div>
+          <div class="lbl">Cloud-based, zero setup</div>
         </div>
         <div class="metric">
-          <div class="num"><span>98.7</span>%</div>
-          <div class="lbl">Payroll runs filed on time</div>
+          <div class="num"><span>3</span>×</div>
+          <div class="lbl">Faster leave approvals</div>
         </div>
         <div class="metric">
-          <div class="num"><span>2,800</span>+</div>
-          <div class="lbl">Companies scheduling on Roster</div>
+          <div class="num"><span>1</span></div>
+          <div class="lbl">System for all HR operations</div>
         </div>
         <div class="metric">
-          <div class="num"><span>11</span>min</div>
-          <div class="lbl">Average time to first schedule</div>
+          <div class="num"><span>24/7</span></div>
+          <div class="lbl">Access from anywhere</div>
         </div>
       </div>
     </div>
@@ -771,8 +771,8 @@
       <figure class="testimonial">
         <span class="mark">"</span>
         <div>
-          <blockquote>We went from three managers fighting over a shared spreadsheet to one schedule everyone trusts. Payroll closes in an afternoon instead of three days.</blockquote>
-          <figcaption><strong>Priya Subramaniam</strong> — Operations Director, Harlow Retail</figcaption>
+          <blockquote>We went from chasing paper leave forms and manual spreadsheets to a single dashboard. PALINDROM streamlined our entire HR workflow in one day.</blockquote>
+          <figcaption><strong>Sarah Almeida</strong> — HR Director, Northbridge Group</figcaption>
         </div>
       </figure>
     </div>
@@ -782,8 +782,8 @@
     <div class="wrap">
       <div class="cta-banner">
         <div>
-          <h2>Stop managing your team in a spreadsheet.</h2>
-          <p>Free for 30 days. No credit card, no setup call required.</p>
+          <h2>Take control of your workforce today.</h2>
+          <p>Free for 30 days. No credit card, no commitment.</p>
         </div>
         <div class="actions">
           <a href="{{ route('register') }}" class="btn btn-lg btn-on-dark">Start free trial</a>
@@ -799,14 +799,14 @@
     <div class="footer-top">
       <div class="footer-brand">
         <a href="#" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROM</a>
-        <p>Scheduling, time tracking, and payroll for teams who run on shifts, not desks.</p>
+        <p>Employee management for modern teams — departments, attendance, leave, and payroll in one place.</p>
       </div>
       <div class="footer-col">
         <h4>Product</h4>
-        <a href="#">Scheduling</a>
-        <a href="#">Time tracking</a>
+        <a href="#">Departments</a>
+        <a href="#">Attendance</a>
+        <a href="#">Leave</a>
         <a href="#">Payroll</a>
-        <a href="#">Reporting</a>
       </div>
       <div class="footer-col">
         <h4>Company</h4>
@@ -824,7 +824,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Roster, Inc.</span>
+      <span>© 2026 PALINDROM, Inc.</span>
       <span>Privacy · Terms</span>
     </div>
   </div>
