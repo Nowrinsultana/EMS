@@ -8,6 +8,8 @@ use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MyLeaveController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\RecruitmentController;
 use App\Http\Controllers\Settings\DepartmentController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +26,9 @@ Route::post('logout', [LoginController::class, 'destroy'])->name('logout')->midd
 
 Route::get('setup-password/{token}', [PasswordSetupController::class, 'show'])->name('password.setup');
 Route::post('setup-password', [PasswordSetupController::class, 'store'])->name('password.setup.store');
+
+Route::get('/jobs/{vacancy}/apply', [RecruitmentController::class, 'applicationForm'])->name('jobs.apply');
+Route::post('/jobs/{vacancy}/apply', [RecruitmentController::class, 'apply'])->name('jobs.apply.store');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
@@ -53,7 +58,19 @@ Route::middleware('auth')->group(function () {
             Route::put('/leave/{leave}/approve', [LeaveController::class, 'approve'])->name('leave.approve');
             Route::put('/leave/{leave}/decline', [LeaveController::class, 'decline'])->name('leave.decline');
             Route::get('/attendance', fn () => view('attendance.index'))->name('attendance.index');
-            Route::get('/recruitment', fn () => view('recruitment.index'))->name('recruitment.index');
+            Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll.index');
+            Route::post('/payroll/salaries', [PayrollController::class, 'storeSalary'])->name('payroll.salaries.store');
+            Route::post('/payroll/adjustments', [PayrollController::class, 'storeAdjustment'])->name('payroll.adjustments.store');
+            Route::post('/payroll/calculate', [PayrollController::class, 'calculate'])->name('payroll.calculate');
+            Route::get('/payroll/{payroll}/slip', [PayrollController::class, 'slip'])->name('payroll.slip');
+            Route::get('/recruitment', [RecruitmentController::class, 'index'])->name('recruitment.index');
+            Route::get('/recruitment/vacancies/create', [RecruitmentController::class, 'create'])->name('recruitment.vacancies.create');
+            Route::post('/recruitment/vacancies', [RecruitmentController::class, 'store'])->name('recruitment.vacancies.store');
+            Route::get('/recruitment/vacancies/{vacancy}/edit', [RecruitmentController::class, 'edit'])->name('recruitment.vacancies.edit');
+            Route::put('/recruitment/vacancies/{vacancy}', [RecruitmentController::class, 'update'])->name('recruitment.vacancies.update');
+            Route::get('/recruitment/vacancies/{vacancy}/applications', [RecruitmentController::class, 'applications'])->name('recruitment.applications');
+            Route::put('/recruitment/applications/{application}', [RecruitmentController::class, 'updateApplication'])->name('recruitment.applications.update');
+            Route::post('/recruitment/applications/{application}/interviews', [RecruitmentController::class, 'storeInterview'])->name('recruitment.interviews.store');
         });
     });
 
