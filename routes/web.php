@@ -8,6 +8,8 @@ use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MyLeaveController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\MyAttendanceController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\RecruitmentController;
 use App\Http\Controllers\Settings\DepartmentController;
@@ -45,7 +47,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/leave/my', [MyLeaveController::class, 'store'])->name('leave.my.store');
         Route::get('/leave/my/{leave}/edit', [MyLeaveController::class, 'edit'])->name('leave.my.edit');
         Route::put('/leave/my/{leave}', [MyLeaveController::class, 'update'])->name('leave.my.update');
-        Route::get('/attendance/my', fn () => view('attendance.my'))->name('attendance.my');
+        Route::get('/attendance/my', [MyAttendanceController::class, 'index'])->name('attendance.my');
+        Route::post('/attendance/check-in', [MyAttendanceController::class, 'checkIn'])->name('attendance.check-in');
+        Route::post('/attendance/check-out', [MyAttendanceController::class, 'checkOut'])->name('attendance.check-out');
+        Route::get('/attendance/scan/{token}', [MyAttendanceController::class, 'scan'])->name('attendance.scan');
 
         Route::middleware('admin')->group(function () {
             Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
@@ -59,7 +64,11 @@ Route::middleware('auth')->group(function () {
             Route::put('/leave/{leave}', [LeaveController::class, 'update'])->name('leave.update');
             Route::put('/leave/{leave}/approve', [LeaveController::class, 'approve'])->name('leave.approve');
             Route::put('/leave/{leave}/decline', [LeaveController::class, 'decline'])->name('leave.decline');
-            Route::get('/attendance', fn () => view('attendance.index'))->name('attendance.index');
+            Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+            Route::get('/attendance/summary', [AttendanceController::class, 'summary'])->name('attendance.summary');
+            Route::get('/attendance/qr', [AttendanceController::class, 'qr'])->name('attendance.qr');
+            Route::post('/attendance/qr/checkout', [AttendanceController::class, 'generateCheckOutQr'])->name('attendance.qr.checkout');
+            Route::post('/attendance/mark', [AttendanceController::class, 'mark'])->name('attendance.mark');
             Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll.index');
             Route::post('/payroll/salaries', [PayrollController::class, 'storeSalary'])->name('payroll.salaries.store');
             Route::post('/payroll/adjustments', [PayrollController::class, 'storeAdjustment'])->name('payroll.adjustments.store');
