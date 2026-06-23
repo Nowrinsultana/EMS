@@ -62,19 +62,15 @@ class EmployeeController extends Controller
             ->with('setup_url', $setupUrl);
     }
 
-    public function edit(Request $request, User $employee): View
+    public function edit(Request $request, $dptid, User $employee): View
     {
-        $dptid = $request->route('dptid');
-
         abort_if((int) $employee->department_id !== (int) $dptid, 404);
 
         return view('employees.edit', compact('employee', 'dptid'));
     }
 
-    public function update(Request $request, User $employee): RedirectResponse
+    public function update(Request $request, $dptid, User $employee): RedirectResponse
     {
-        $dptid = $request->route('dptid');
-
         abort_if((int) $employee->department_id !== (int) $dptid, 404);
 
         $data = $request->validate([
@@ -95,10 +91,8 @@ class EmployeeController extends Controller
             ->with('status', 'Employee updated successfully.');
     }
 
-    public function destroy(Request $request, User $employee): RedirectResponse
+    public function destroy(Request $request, $dptid, User $employee): RedirectResponse
     {
-        $dptid = $request->route('dptid');
-
         abort_if((int) $employee->department_id !== (int) $dptid, 404);
 
         if ($employee->isadmin) {

@@ -22,19 +22,15 @@ class LeaveController extends Controller
         return view('leave.index', compact('leaves', 'dptid'));
     }
 
-    public function edit(Request $request, Leave $leave): View
+    public function edit(Request $request, $dptid, Leave $leave): View
     {
-        $dptid = $request->route('dptid');
-
         abort_if((int) $leave->department_id !== (int) $dptid, 404);
 
         return view('leave.edit', compact('leave', 'dptid'));
     }
 
-    public function update(Request $request, Leave $leave): RedirectResponse
+    public function update(Request $request, $dptid, Leave $leave): RedirectResponse
     {
-        $dptid = $request->route('dptid');
-
         abort_if((int) $leave->department_id !== (int) $dptid, 404);
 
         $data = $request->validate([
@@ -49,15 +45,19 @@ class LeaveController extends Controller
             ->with('status', 'Leave updated successfully.');
     }
 
-    public function approve(Leave $leave): RedirectResponse
+    public function approve($dptid, Leave $leave): RedirectResponse
     {
+        abort_if((int) $leave->department_id !== (int) $dptid, 404);
+
         $leave->update(['status' => LeaveStatus::Approved]);
 
         return back()->with('status', 'Leave approved.');
     }
 
-    public function decline(Leave $leave): RedirectResponse
+    public function decline($dptid, Leave $leave): RedirectResponse
     {
+        abort_if((int) $leave->department_id !== (int) $dptid, 404);
+
         $leave->update(['status' => LeaveStatus::Declined]);
 
         return back()->with('status', 'Leave declined.');
