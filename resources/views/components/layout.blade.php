@@ -41,6 +41,7 @@
                                         <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Employees</a>
                                         <a href="{{ route('leave.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Leave</a>
                                         <a href="{{ route('attendance.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Attendance</a>
+                                        <a href="{{ route('payroll.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Payroll</a>
                                         <a href="{{ route('recruitment.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Recruitment</a>
                                         @if ($isSuperuser)
                                             <a href="{{ route('settings.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Settings</a>
