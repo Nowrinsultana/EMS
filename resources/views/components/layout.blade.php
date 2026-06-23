@@ -24,7 +24,7 @@
                 <div class="flex justify-between h-16">
                     <div class="flex items-center space-x-8">
                         <a href="{{ url('/') }}" class="flex items-center gap-2 shrink-0 text-xl font-bold text-gray-800">
-                            <svg class="shrink-0" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROM
+                            <svg class="shrink-0" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROME
                         </a>
                         @auth
                             <div class="hidden sm:flex items-center space-x-4">

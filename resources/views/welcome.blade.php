@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PALINDROM — Employee Management System</title>
+<title>PALINDROME — Employee Management System</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
@@ -570,7 +570,7 @@
 
 <header class="site">
   <div class="nav">
-    <a href="#" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROM</a>
+    <a href="#" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROME</a>
     <nav class="links">
       <a href="#features">Product</a>
       <a href="#flow">How it works</a>
@@ -590,7 +590,7 @@
     <div class="wrap hero-grid">
       <div>
         <span class="eyebrow">● Employee Management System</span>
-        <h1 class="hero-title">Manage your workforce<br>with <em>PALINDROM.</em></h1>
+        <h1 class="hero-title">Manage your workforce<br>with <em>PALINDROME.</em></h1>
         <p class="hero-sub">Departments, employees, attendance, leave, and payroll — all in one place. Built for teams who need structure without the complexity.</p>
         <div class="hero-actions">
           <a href="{{ route('register') }}" class="btn btn-primary btn-lg">Start free trial</a>
@@ -673,7 +673,7 @@
       <div class="section-head">
         <span class="section-tag">What it does</span>
         <h2 class="section-title">Everything between hiring and paying, in one place.</h2>
-        <p class="section-desc">PALINDROM brings departments, employees, attendance, leave, and payroll together — no more jumping between tools.</p>
+        <p class="section-desc">PALINDROME brings departments, employees, attendance, leave, and payroll together — no more jumping between tools.</p>
       </div>
 
       <div class="feature-grid">
@@ -771,7 +771,7 @@
       <figure class="testimonial">
         <span class="mark">"</span>
         <div>
-          <blockquote>We went from chasing paper leave forms and manual spreadsheets to a single dashboard. PALINDROM streamlined our entire HR workflow in one day.</blockquote>
+          <blockquote>We went from chasing paper leave forms and manual spreadsheets to a single dashboard. PALINDROME streamlined our entire HR workflow in one day.</blockquote>
           <figcaption><strong>Sarah Almeida</strong> — HR Director, Northbridge Group</figcaption>
         </div>
       </figure>
@@ -798,7 +798,7 @@
   <div class="wrap">
     <div class="footer-top">
       <div class="footer-brand">
-        <a href="#" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROM</a>
+        <a href="#" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROME</a>
         <p>Employee management for modern teams — departments, attendance, leave, and payroll in one place.</p>
       </div>
       <div class="footer-col">
@@ -824,7 +824,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 PALINDROM, Inc.</span>
+      <span>© 2026 PALINDROME, Inc.</span>
       <span>Privacy · Terms</span>
     </div>
   </div>
