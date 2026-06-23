@@ -6,8 +6,6 @@ use App\Models\Attendance;
 use App\Models\DailyQrCode;
 use App\Models\User;
 use Carbon\Carbon;
-use chillerlan\QRCode\QRCode;
-use chillerlan\QRCode\QROptions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -81,8 +79,6 @@ class AttendanceController extends Controller
             ]
         );
 
-        $appUrl = url('/');
-
         $checkInUrl = route('attendance.scan', [
             'dptid' => $dptid,
             'token' => $qrCode->check_in_token,
@@ -96,13 +92,7 @@ class AttendanceController extends Controller
             ], true);
         }
 
-        $options = new QROptions;
-        $options->outputType = QRCode::OUTPUT_MARKUP_SVG;
-        $options->scale = 8;
-
-        $qrCodeSvg = (new QRCode($options))->render($checkInUrl);
-
-        return view('attendance.qr', compact('dptid', 'qrCode', 'checkInUrl', 'checkOutUrl', 'qrCodeSvg'));
+        return view('attendance.qr', compact('dptid', 'qrCode', 'checkInUrl', 'checkOutUrl'));
     }
 
     public function generateCheckOutQr(Request $request, $dptid): RedirectResponse

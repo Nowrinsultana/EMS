@@ -45,9 +45,8 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-xs text-gray-400">
-                                    @if ($att->qr_check_in) CI@if ($att->qr_check_out) / CO @endif
-                                    @else —
-                                    @endif
+                                    @php $qrLabel = $att->qr_check_in ? 'CI'.($att->qr_check_out ? ' / CO' : '') : '—'; @endphp
+                                    {{ $qrLabel }}
                                 </td>
                             </tr>
                         @empty

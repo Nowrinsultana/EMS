@@ -15,24 +15,14 @@
             <div class="flex flex-col items-center space-y-6">
                 <div class="bg-white border-2 border-gray-200 rounded-lg p-4">
                     <h2 class="text-sm font-medium text-gray-700 text-center mb-3">Check In</h2>
-                    <div class="w-64 h-64 flex items-center justify-center">
-                        {!! $qrCodeSvg !!}
-                    </div>
+                    <div id="qr-checkin" class="w-64 h-64 flex items-center justify-center"></div>
                     <p class="text-xs text-gray-400 text-center mt-3">Scan to check in</p>
                 </div>
 
                 @if ($checkOutUrl)
                     <div class="bg-white border-2 border-gray-200 rounded-lg p-4">
                         <h2 class="text-sm font-medium text-gray-700 text-center mb-3">Check Out</h2>
-                        <div class="w-64 h-64 flex items-center justify-center">
-                            @php
-                                $coOptions = new \chillerlan\QRCode\QROptions;
-                                $coOptions->outputType = \chillerlan\QRCode\QRCode::OUTPUT_MARKUP_SVG;
-                                $coOptions->scale = 8;
-                                $coSvg = (new \chillerlan\QRCode\QRCode($coOptions))->render($checkOutUrl);
-                            @endphp
-                            {!! $coSvg !!}
-                        </div>
+                        <div id="qr-checkout" class="w-64 h-64 flex items-center justify-center"></div>
                         <p class="text-xs text-gray-400 text-center mt-3">Scan to check out</p>
                     </div>
                 @else
@@ -44,4 +34,20 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script>
+        new QRCode(document.getElementById('qr-checkin'), {
+            text: '{{ $checkInUrl }}',
+            width: 256,
+            height: 256,
+        });
+        @if ($checkOutUrl)
+            new QRCode(document.getElementById('qr-checkout'), {
+                text: '{{ $checkOutUrl }}',
+                width: 256,
+                height: 256,
+            });
+        @endif
+    </script>
 </x-layout>
