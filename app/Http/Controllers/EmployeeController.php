@@ -16,7 +16,6 @@ class EmployeeController extends Controller
         $dptid = $request->route('dptid');
 
         $employees = User::where('department_id', $dptid)
-            ->where('isadmin', false)
             ->where('superuser', false)
             ->latest()
             ->get();
@@ -61,5 +60,55 @@ class EmployeeController extends Controller
         return redirect()->route('employees.index', ['dptid' => $dptid])
             ->with('status', 'Employee added successfully.')
             ->with('setup_url', $setupUrl);
+    }
+
+    public function edit(Request $request, User $employee): View
+    {
+        $dptid = $request->route('dptid');
+
+        abort_if((int) $employee->department_id !== (int) $dptid, 404);
+
+        return view('employees.edit', compact('employee', 'dptid'));
+    }
+
+    public function update(Request $request, User $employee): RedirectResponse
+    {
+        $dptid = $request->route('dptid');
+
+        abort_if((int) $employee->department_id !== (int) $dptid, 404);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $employee->id],
+            'phone_number' => ['nullable', 'string', 'max:20'],
+            'date_of_birth' => ['nullable', 'date'],
+            'passport_number' => ['nullable', 'string', 'max:50'],
+            'staff_id' => ['nullable', 'string', 'max:50', 'unique:users,staff_id,' . $employee->id],
+            'leave_balance' => ['nullable', 'integer', 'min:0'],
+            'start_date' => ['nullable', 'date'],
+            'status' => ['nullable', 'boolean'],
+        ]);
+
+        $employee->update($data);
+
+        return redirect()->route('employees.index', ['dptid' => $dptid])
+            ->with('status', 'Employee updated successfully.');
+    }
+
+    public function destroy(Request $request, User $employee): RedirectResponse
+    {
+        $dptid = $request->route('dptid');
+
+        abort_if((int) $employee->department_id !== (int) $dptid, 404);
+
+        if ($employee->isadmin) {
+            return redirect()->route('employees.index', ['dptid' => $dptid])
+                ->with('error', 'Department admins cannot be deleted.');
+        }
+
+        $employee->delete();
+
+        return redirect()->route('employees.index', ['dptid' => $dptid])
+            ->with('status', 'Employee deleted successfully.');
     }
 }

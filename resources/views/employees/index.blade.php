@@ -10,6 +10,10 @@
                 <p class="mb-4 text-green-600 text-sm">{{ session('status') }}</p>
             @endif
 
+            @if (session('error'))
+                <p class="mb-4 text-red-600 text-sm">{{ session('error') }}</p>
+            @endif
+
             @if (session('setup_url'))
                 <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded">
                     <p class="text-sm text-blue-700 font-medium mb-1">Share this link with the employee to set their password:</p>
@@ -32,6 +36,7 @@
                             <th class="px-4 py-3 font-medium">Phone</th>
                             <th class="px-4 py-3 font-medium">Start Date</th>
                             <th class="px-4 py-3 font-medium">Status</th>
+                            <th class="px-4 py-3 font-medium">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y">
@@ -43,10 +48,18 @@
                                 <td class="px-4 py-3">{{ $emp->phone_number ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $emp->start_date?->format('Y-m-d') ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $emp->status ? 'Active' : 'Inactive' }}</td>
+                                <td class="px-4 py-3 flex space-x-2">
+                                    <a href="{{ route('employees.edit', ['dptid' => $dptid, 'employee' => $emp]) }}" class="text-indigo-600 hover:text-indigo-900 text-sm">Edit</a>
+                                    <form method="POST" action="{{ route('employees.destroy', ['dptid' => $dptid, 'employee' => $emp]) }}" onsubmit="return confirm('Delete this employee?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900 text-sm">Delete</button>
+                                    </form>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-6 text-center text-gray-500">No employees in this department.</td>
+                                <td colspan="7" class="px-4 py-6 text-center text-gray-500">No employees in this department.</td>
                             </tr>
                         @endforelse
                     </tbody>
