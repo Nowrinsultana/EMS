@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Leave;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class MyLeaveController extends Controller
@@ -31,6 +32,21 @@ class MyLeaveController extends Controller
             'start_date' => ['required', 'date', 'after_or_equal:today'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
         ]);
+
+        $leaveDates = $user->leave_dates ?? [];
+        $period = new \DatePeriod(
+            new \DateTime($data['start_date']),
+            new \DateInterval('P1D'),
+            (new \DateTime($data['end_date']))->modify('+1 day'),
+        );
+        foreach ($period as $dt) {
+            $dateStr = $dt->format('Y-m-d');
+            if (in_array($dateStr, $leaveDates)) {
+                return back()
+                    ->withErrors(['start_date' => "You already have an approved leave on $dateStr."])
+                    ->withInput();
+            }
+        }
 
         Leave::create([
             'department_id' => $user->department_id,
