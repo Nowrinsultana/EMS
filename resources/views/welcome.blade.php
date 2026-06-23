@@ -77,11 +77,9 @@
     font-size: 22px;
     letter-spacing: 0.01em;
   }
-  .brand .dot{
-    width:10px; height:10px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-tint);
+  .brand .logo-mark{
+    flex-shrink: 0;
+    border-radius: 7px;
   }
   nav.links{
     display:flex;
@@ -572,16 +570,17 @@
 
 <header class="site">
   <div class="nav">
-    <a href="#" class="brand"><span class="dot"></span>ROSTER</a>
+    <a href="#" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROM</a>
     <nav class="links">
       <a href="#features">Product</a>
       <a href="#flow">How it works</a>
       <a href="#metrics">Customers</a>
       <a href="#cta">Pricing</a>
+      <a href="{{ route('jobs.list') }}">Jobs</a>
     </nav>
     <div class="nav-cta">
-      <a href="#" class="signin">Sign in</a>
-      <a href="#" class="btn btn-primary">Start free trial</a>
+      <a href="{{ route('login') }}" class="signin">Sign in</a>
+      <a href="{{ route('register') }}" class="btn btn-primary">Start free trial</a>
     </div>
   </div>
 </header>
@@ -594,8 +593,8 @@
         <h1 class="hero-title">Your whole team,<br>on <em>one roster.</em></h1>
         <p class="hero-sub">Schedules, time tracking, and payroll for teams who've outgrown spreadsheets — and don't have patience for software that fights back.</p>
         <div class="hero-actions">
-          <a href="#" class="btn btn-primary btn-lg">Start free trial</a>
-          <a href="#" class="btn btn-ghost btn-lg">Watch a 2-min demo</a>
+          <a href="{{ route('register') }}" class="btn btn-primary btn-lg">Start free trial</a>
+          <a href="{{ route('jobs.list') }}" class="btn btn-ghost btn-lg">View open positions</a>
         </div>
         <div class="avatars">
           <div class="avatar-stack">
@@ -787,8 +786,8 @@
           <p>Free for 30 days. No credit card, no setup call required.</p>
         </div>
         <div class="actions">
-          <a href="#" class="btn btn-lg btn-on-dark">Start free trial</a>
-          <a href="#" class="btn btn-lg btn-ghost-dark">Talk to sales</a>
+          <a href="{{ route('register') }}" class="btn btn-lg btn-on-dark">Start free trial</a>
+          <a href="{{ route('jobs.list') }}" class="btn btn-lg btn-ghost-dark">View open positions</a>
         </div>
       </div>
     </div>
@@ -799,7 +798,7 @@
   <div class="wrap">
     <div class="footer-top">
       <div class="footer-brand">
-        <a href="#" class="brand"><span class="dot"></span>ROSTER</a>
+        <a href="#" class="brand"><svg class="logo-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROM</a>
         <p>Scheduling, time tracking, and payroll for teams who run on shifts, not desks.</p>
       </div>
       <div class="footer-col">

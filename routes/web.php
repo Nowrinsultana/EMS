@@ -29,6 +29,7 @@ Route::post('logout', [LoginController::class, 'destroy'])->name('logout')->midd
 Route::get('setup-password/{token}', [PasswordSetupController::class, 'show'])->name('password.setup');
 Route::post('setup-password', [PasswordSetupController::class, 'store'])->name('password.setup.store');
 
+Route::get('/jobs', [RecruitmentController::class, 'publicList'])->name('jobs.list');
 Route::get('/jobs/{vacancy}/apply', [RecruitmentController::class, 'applicationForm'])->name('jobs.apply');
 Route::post('/jobs/{vacancy}/apply', [RecruitmentController::class, 'apply'])->name('jobs.apply.store');
 
