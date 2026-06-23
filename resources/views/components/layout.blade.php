@@ -5,6 +5,8 @@
     $isDeptAdmin = $user?->isadmin;
     $routeDptid = request()->route('dptid');
     $currentDptid = $routeDptid ?? ($isSuperuser ? Department::value('id') : $user?->department_id);
+    $routeName = request()->route()?->getName();
+    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my');
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -26,17 +28,26 @@
                             <div class="hidden sm:flex items-center space-x-4">
                                 <a href="{{ route('dashboard') }}" class="text-sm text-gray-600 hover:text-gray-900">Dashboard</a>
 
-                                @if ($isSuperuser)
-                                    <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Employees</a>
-                                    <a href="{{ route('leave.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Leave</a>
-                                    <a href="{{ route('attendance.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Attendance</a>
-                                    <a href="{{ route('recruitment.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Recruitment</a>
-                                    <a href="{{ route('settings.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Settings</a>
-                                @elseif ($isDeptAdmin && $currentDptid)
-                                    <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Employees</a>
-                                    <a href="{{ route('leave.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Leave</a>
-                                    <a href="{{ route('attendance.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Attendance</a>
-                                    <a href="{{ route('recruitment.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Recruitment</a>
+                                @if ($isSuperuser || ($isDeptAdmin && $currentDptid))
+                                    @if ($onPersonalPage)
+                                        <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Leave</a>
+                                        <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Attendance</a>
+                                        @if ($isSuperuser)
+                                            <a href="{{ route('settings.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Settings</a>
+                                        @endif
+                                        <span class="text-xs text-gray-300">|</span>
+                                        <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">← Admin</a>
+                                    @else
+                                        <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Employees</a>
+                                        <a href="{{ route('leave.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Leave</a>
+                                        <a href="{{ route('attendance.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Attendance</a>
+                                        <a href="{{ route('recruitment.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Recruitment</a>
+                                        @if ($isSuperuser)
+                                            <a href="{{ route('settings.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Settings</a>
+                                        @endif
+                                        <span class="text-xs text-gray-300">|</span>
+                                        <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">My Panel →</a>
+                                    @endif
                                 @elseif ($currentDptid)
                                     <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Leave</a>
                                     <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Attendance</a>
