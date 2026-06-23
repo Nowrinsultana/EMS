@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/leave/my', [MyLeaveController::class, 'index'])->name('leave.my');
         Route::get('/leave/my/create', [MyLeaveController::class, 'create'])->name('leave.my.create');
         Route::post('/leave/my', [MyLeaveController::class, 'store'])->name('leave.my.store');
+        Route::get('/leave/my/{leave}/edit', [MyLeaveController::class, 'edit'])->name('leave.my.edit');
+        Route::put('/leave/my/{leave}', [MyLeaveController::class, 'update'])->name('leave.my.update');
         Route::get('/attendance/my', fn () => view('attendance.my'))->name('attendance.my');
 
         Route::middleware('admin')->group(function () {

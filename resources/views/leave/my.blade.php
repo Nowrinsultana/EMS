@@ -34,10 +34,15 @@
                                         {{ ucfirst($leave->status->value) }}
                                     </span>
                                 </td>
+                                <td class="px-4 py-3">
+                                    @if ($leave->status->value === 'pending')
+                                        <a href="{{ route('leave.my.edit', ['dptid' => request()->route('dptid'), 'leave' => $leave]) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Edit</a>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-4 py-6 text-center text-gray-500">No leave requests yet.</td>
+                                <td colspan="5" class="px-4 py-6 text-center text-gray-500">No leave requests yet.</td>
                             </tr>
                         @endforelse
                     </tbody>
