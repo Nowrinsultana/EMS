@@ -25,12 +25,13 @@ class MyAttendanceController extends Controller
 
     public function checkIn(Request $request): RedirectResponse
     {
+        $dptid = $request->route('dptid');
         $user = $request->user();
         $today = now()->format('Y-m-d');
 
         $existing = Attendance::firstOrNew(
             ['user_id' => $user->id, 'date' => $today],
-            ['department_id' => $user->department_id],
+            ['department_id' => $dptid],
         );
 
         if ($existing->check_in) {
@@ -46,6 +47,7 @@ class MyAttendanceController extends Controller
 
     public function checkOut(Request $request): RedirectResponse
     {
+        $dptid = $request->route('dptid');
         $user = $request->user();
         $today = now()->format('Y-m-d');
 
@@ -86,7 +88,7 @@ class MyAttendanceController extends Controller
 
         $attendance = Attendance::firstOrNew(
             ['user_id' => $user->id, 'date' => $today],
-            ['department_id' => $user->department_id],
+            ['department_id' => $dptid],
         );
 
         if ($isCheckIn) {
