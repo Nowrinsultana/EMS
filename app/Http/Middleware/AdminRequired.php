@@ -19,7 +19,7 @@ class AdminRequired
             return redirect()->route('login');
         }
 
-        if (! Auth::user()->isadmin) {
+        if (! Auth::user()->isadmin && ! Auth::user()->superuser) {
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json(['message' => 'Forbidden. Admin access required.'], 403);
             }

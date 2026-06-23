@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
+use Illuminate\Support\Str;
+
+class EmployeeController extends Controller
+{
+    public function index(Request $request): View
+    {
+        $dptid = $request->route('dptid');
+
+        $employees = User::where('department_id', $dptid)
+            ->where('isadmin', false)
+            ->where('superuser', false)
+            ->latest()
+            ->get();
+
+        return view('employees.index', compact('employees', 'dptid'));
+    }
+
+    public function create(Request $request): View
+    {
+        $dptid = $request->route('dptid');
+        $department = \App\Models\Department::find($dptid);
+
+        return view('employees.create', compact('dptid', 'department'));
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $dptid = $request->route('dptid');
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'phone_number' => ['nullable', 'string', 'max:20'],
+            'date_of_birth' => ['nullable', 'date'],
+            'passport_number' => ['nullable', 'string', 'max:50'],
+            'staff_id' => ['nullable', 'string', 'max:50', 'unique:users,staff_id'],
+            'leave_balance' => ['nullable', 'integer', 'min:0'],
+            'start_date' => ['nullable', 'date'],
+            'status' => ['nullable', 'boolean'],
+        ]);
+
+        $data['department_id'] = $dptid;
+        $data['password'] = Hash::make(Str::password(12));
+
+        $user = User::create($data);
+
+        $token = Str::random(60);
+        $user->update(['setup_token' => $token]);
+
+        $setupUrl = route('password.setup', ['token' => $token]);
+
+        return redirect()->route('employees.index', ['dptid' => $dptid])
+            ->with('status', 'Employee added successfully.')
+            ->with('setup_url', $setupUrl);
+    }
+}

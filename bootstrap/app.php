@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'login' => \App\Http\Middleware\LoginRequired::class,
             'admin' => \App\Http\Middleware\AdminRequired::class,
+            'dept' => \App\Http\Middleware\DepartmentAccess::class,
+            'superuser' => \App\Http\Middleware\SuperuserRequired::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
