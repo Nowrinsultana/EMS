@@ -24,6 +24,15 @@
                 @enderror
             </div>
 
+            <div class="mb-4">
+                <label for="reason" class="block text-sm font-medium text-gray-700">Reason</label>
+                <textarea id="reason" name="reason" rows="3"
+                          class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('reason', $leave->reason) }}</textarea>
+                @error('reason')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
             <button type="submit"
                     class="w-full py-2 px-4 bg-indigo-600 text-white rounded hover:bg-indigo-700">
                 Update Request

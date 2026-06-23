@@ -31,6 +31,7 @@ class MyLeaveController extends Controller
         $data = $request->validate([
             'start_date' => ['required', 'date', 'after_or_equal:today'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'reason' => ['nullable', 'string', 'max:500'],
         ]);
 
         $overlapError = $this->checkConflict($user->id, $data['start_date'], $data['end_date']);
@@ -43,6 +44,7 @@ class MyLeaveController extends Controller
             'staff_id' => $user->id,
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
+            'reason' => $data['reason'],
             'status' => 'pending',
         ]);
 
@@ -66,6 +68,7 @@ class MyLeaveController extends Controller
         $data = $request->validate([
             'start_date' => ['required', 'date', 'after_or_equal:today'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'reason' => ['nullable', 'string', 'max:500'],
         ]);
 
         $overlapError = $this->checkConflict(
