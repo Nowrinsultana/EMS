@@ -14,6 +14,7 @@
 - `src/models/User.php` (mirror) — `Src\Models` namespace
 - Custom columns added via migration: `date_of_birth`, `phone_number`, `passport_number`, `leave_dates` (JSON), `staff_id` (unique), `isadmin`, `leave_balance`, `profile_photo`, `status`, `department_id` (FK), `superuser`
 - `App\Models\Department`: `id`, `name`, `admin_id` (FK), `department_head_id` (nullable FK), timestamps
+- `App\Models\Leave`: `id`, `department_id` (FK), `staff_id` (FK), `start_date`, `end_date`, `status` (enum: pending/approved/declined), timestamps
 
 ## Auth (Web Routes)
 | Route | Method | Controller | Notes |

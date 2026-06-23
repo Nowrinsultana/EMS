@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordSetupController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\MyLeaveController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Settings\DepartmentController;
@@ -33,7 +35,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
 
     Route::prefix('{dptid}')->middleware('dept')->group(function () {
-        Route::get('/leave/my', fn () => view('leave.my'))->name('leave.my');
+        Route::get('/leave/my', [MyLeaveController::class, 'index'])->name('leave.my');
+        Route::get('/leave/my/create', [MyLeaveController::class, 'create'])->name('leave.my.create');
+        Route::post('/leave/my', [MyLeaveController::class, 'store'])->name('leave.my.store');
         Route::get('/attendance/my', fn () => view('attendance.my'))->name('attendance.my');
 
         Route::middleware('admin')->group(function () {
@@ -43,7 +47,11 @@ Route::middleware('auth')->group(function () {
             Route::get('/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
             Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
             Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
-            Route::get('/leave', fn () => view('leave.index'))->name('leave.index');
+            Route::get('/leave', [LeaveController::class, 'index'])->name('leave.index');
+            Route::get('/leave/{leave}/edit', [LeaveController::class, 'edit'])->name('leave.edit');
+            Route::put('/leave/{leave}', [LeaveController::class, 'update'])->name('leave.update');
+            Route::put('/leave/{leave}/approve', [LeaveController::class, 'approve'])->name('leave.approve');
+            Route::put('/leave/{leave}/decline', [LeaveController::class, 'decline'])->name('leave.decline');
             Route::get('/attendance', fn () => view('attendance.index'))->name('attendance.index');
             Route::get('/recruitment', fn () => view('recruitment.index'))->name('recruitment.index');
         });
