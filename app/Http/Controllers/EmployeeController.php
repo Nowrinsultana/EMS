@@ -123,7 +123,6 @@ class EmployeeController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'type' => ['nullable', 'string', 'max:50'],
             'file' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
@@ -131,8 +130,10 @@ class EmployeeController extends Controller
 
         $employee->documents()->create([
             'name' => $data['name'],
-            'type' => $data['type'],
-            'file_path' => $path,
+            'original_name' => $request->file('file')->getClientOriginalName(),
+            'path' => $path,
+            'mime_type' => $request->file('file')->getMimeType(),
+            'size' => $request->file('file')->getSize(),
         ]);
 
         return redirect()->route('employees.show', ['dptid' => $dptid, 'employee' => $employee])
@@ -144,7 +145,7 @@ class EmployeeController extends Controller
         abort_if((int) $employee->department_id !== (int) $dptid, 404);
         abort_if((int) $document->user_id !== (int) $employee->id, 404);
 
-        Storage::disk('public')->delete($document->file_path);
+        Storage::disk('public')->delete($document->path);
         $document->delete();
 
         return redirect()->route('employees.show', ['dptid' => $dptid, 'employee' => $employee])

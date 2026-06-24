@@ -105,10 +105,10 @@
                             @foreach ($documents as $doc)
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-4 py-3">{{ $doc->name }}</td>
-                                    <td class="px-4 py-3">{{ $doc->type ?? '—' }}</td>
+                                    <td class="px-4 py-3">{{ $doc->mime_type ?? '—' }}</td>
                                     <td class="px-4 py-3">{{ $doc->created_at->format('Y-m-d') }}</td>
                                     <td class="px-4 py-3 flex space-x-2">
-                                        <a href="{{ Storage::url($doc->file_path) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 text-sm">View</a>
+                                        <a href="{{ Storage::url($doc->path) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 text-sm">View</a>
                                         <form method="POST" action="{{ route('employees.documents.destroy', ['dptid' => $dptid, 'employee' => $employee, 'document' => $doc]) }}" onsubmit="return confirm('Delete this document?')">
                                             @csrf
                                             @method('DELETE')
