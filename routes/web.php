@@ -34,7 +34,7 @@ Route::get('/jobs/{vacancy}/apply', [RecruitmentController::class, 'applicationF
 Route::post('/jobs/{vacancy}/apply', [RecruitmentController::class, 'apply'])->name('jobs.apply.store');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
