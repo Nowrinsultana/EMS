@@ -10,6 +10,7 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\MyAttendanceController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\PersonalPanelController;
 use App\Http\Controllers\RecruitmentController;
@@ -42,6 +43,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/password', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::put('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::put('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 
     Route::prefix('{dptid}')->middleware('dept')->group(function () {
         Route::get('/leave/my', [MyLeaveController::class, 'index'])->name('leave.my');
