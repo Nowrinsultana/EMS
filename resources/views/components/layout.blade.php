@@ -1,5 +1,6 @@
 @php
     use App\Models\Department;
+    use App\Models\Notification as NotificationModel;
     $user = Auth::user();
     $isSuperuser = $user?->superuser;
     $isDeptAdmin = $user?->isadmin;
@@ -8,6 +9,9 @@
     $routeName = request()->route()?->getName();
     $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'leave.my.'));
     $isActive = fn ($patterns) => collect((array) $patterns)->contains(fn ($p) => str_starts_with($routeName ?? '', $p));
+    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'panel.'));
+    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my');
+    $unreadCount = $user ? NotificationModel::forUser($user)->unread()->count() : 0;
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -107,6 +111,32 @@
                                        class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
                                         My Panel &rarr;
                                     </a>
+                                @if ($isSuperuser || ($isDeptAdmin && $currentDptid))
+                                    @if ($onPersonalPage)
+                                        <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Panel</a>
+                                        <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Leave</a>
+                                        <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Attendance</a>
+                                        @if ($isSuperuser)
+                                            <a href="{{ route('settings.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Settings</a>
+                                        @endif
+                                        <span class="text-xs text-gray-300">|</span>
+                                        <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">← Admin</a>
+                                    @else
+                                        <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Employees</a>
+                                        <a href="{{ route('leave.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Leave</a>
+                                        <a href="{{ route('attendance.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Attendance</a>
+                                        <a href="{{ route('payroll.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Payroll</a>
+                                        <a href="{{ route('recruitment.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Recruitment</a>
+                                        @if ($isSuperuser)
+                                            <a href="{{ route('settings.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Settings</a>
+                                        @endif
+                                        <span class="text-xs text-gray-300">|</span>
+                                        <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">My Panel →</a>
+                                    @endif
+                                @elseif ($currentDptid)
+                                    <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Panel</a>
+                                    <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Leave</a>
+                                    <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Attendance</a>
                                 @endif
                             </div>
                         @endauth
@@ -165,6 +195,17 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                             </button>
+                            <a href="{{ route('notifications.index') }}" class="relative text-sm text-gray-600 hover:text-gray-900">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                @if ($unreadCount > 0)
+                                    <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{{ min($unreadCount, 9) }}</span>
+                                @endif
+                            </a>
+                            <a href="{{ route('profile.edit') }}" class="text-sm text-gray-600 hover:text-gray-900">{{ $user->name }}</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="text-sm text-gray-600 hover:text-gray-900">Logout</button>
+                            </form>
                         @else
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">Login</a>
