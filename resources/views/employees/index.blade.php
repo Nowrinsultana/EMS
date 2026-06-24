@@ -48,7 +48,8 @@
                                 <td class="px-4 py-3">{{ $emp->phone_number ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $emp->start_date?->format('Y-m-d') ?? '—' }}</td>
                                 <td class="px-4 py-3">{{ $emp->status ? 'Active' : 'Inactive' }}</td>
-                                <td class="px-4 py-3 flex space-x-2">
+                                <td class="px-4 py-3 flex space-x-3">
+                                    <a href="{{ route('employees.show', ['dptid' => $dptid, 'employee' => $emp]) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">View</a>
                                     <a href="{{ route('employees.edit', ['dptid' => $dptid, 'employee' => $emp]) }}" class="text-indigo-600 hover:text-indigo-900 text-sm">Edit</a>
                                     <form method="POST" action="{{ route('employees.destroy', ['dptid' => $dptid, 'employee' => $emp]) }}" onsubmit="return confirm('Delete this employee?')">
                                         @csrf
