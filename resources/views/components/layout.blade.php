@@ -21,6 +21,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased">
+<<<<<<< Updated upstream
     <div class="min-h-screen bg-gray-100">
         <nav class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,11 +29,28 @@
                     <div class="flex items-center space-x-8">
                         <a href="{{ url('/') }}" class="flex items-center gap-2 shrink-0 text-xl font-bold text-gray-800">
                             <svg class="shrink-0" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROME
+=======
+    <div class="min-h-screen bg-gray-50">
+        <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-xs">
+            <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+                    <div class="flex items-center justify-between h-12 lg:h-14">
+
+                    <div class="flex items-center gap-1 sm:gap-2 lg:gap-4">
+                        <a href="{{ url('/') }}" class="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                            <svg class="w-5 h-5 lg:w-6 lg:h-6" viewBox="0 0 32 32" aria-hidden="true">
+                                <rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/>
+                                <path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/>
+                                <path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/>
+                                <line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/>
+                            </svg>
+                            <span class="text-xs sm:text-sm lg:text-base font-bold text-gray-900 tracking-tight">PALINDROME</span>
+>>>>>>> Stashed changes
                         </a>
                         @auth
                             <div class="hidden sm:flex items-center space-x-4">
                                 <a href="{{ route('dashboard') }}" class="text-sm text-gray-600 hover:text-gray-900">Dashboard</a>
 
+<<<<<<< Updated upstream
                                 @if ($isSuperuser || ($isDeptAdmin && $currentDptid))
                                     @if ($onPersonalPage)
                                         <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Panel</a>
@@ -64,11 +82,58 @@
                         @endauth
                     </div>
                     <div class="flex items-center space-x-4">
+=======
+                                @foreach ($navItems as $item)
+                                    @php
+                                        $href = match (true) {
+                                            $item['route'] === 'dashboard' => route('dashboard'),
+                                            $item['route'] === 'settings.index' => route('settings.index'),
+                                            $item['route'] === 'employees' => route('employees.index', ['dptid' => $currentDptid]),
+                                            $item['route'] === 'leave' => route('leave.index', ['dptid' => $currentDptid]),
+                                            $item['route'] === 'attendance' => route('attendance.index', ['dptid' => $currentDptid]),
+                                            $item['route'] === 'payroll' => route('payroll.index', ['dptid' => $currentDptid]),
+                                            $item['route'] === 'recruitment' => route('recruitment.index', ['dptid' => $currentDptid]),
+                                            $item['route'] === 'leave.my' => route('leave.my', ['dptid' => $currentDptid]),
+                                            $item['route'] === 'attendance.my' => route('attendance.my', ['dptid' => $currentDptid]),
+                                            default => '#',
+                                        };
+                                        $active = $isActive($item['route']);
+                                    @endphp
+                                    <a href="{{ $href }}"
+                                       class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium rounded-lg transition-colors duration-150 {{ $active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' }}">
+                                        <span class="shrink-0">{!! svg_icon($item['icon'], $active ? '#4338CA' : '#6B7280') !!}</span>
+                                        {{ $item['label'] }}
+                                    </a>
+                                @endforeach
+
+                                @if ($onPersonalPage && ($isSuperuser || $isDeptAdmin))
+                                    <span class="mx-0.5 w-px h-4 bg-gray-200"></span>
+                                    <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}"
+                                       class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
+                                        &larr; Admin Panel
+                                    </a>
+                                @elseif (!$onPersonalPage && ($isSuperuser || $isDeptAdmin) && $routeName !== 'dashboard')
+                                    <span class="mx-0.5 w-px h-4 bg-gray-200"></span>
+                                    <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}"
+                                       class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
+                                        My Panel &rarr;
+                                    </a>
+                            @endif
+                            </div>
+                        @endauth
+                    </div>
+
+                    <div class="flex items-center gap-1 sm:gap-2">
+>>>>>>> Stashed changes
                         @auth
                             @if ($isSuperuser)
                                 <form method="GET" action="{{ url('/' . $currentDptid . '/employees') }}" class="flex items-center">
                                     <select name="dpt_switch" onchange="this.form.action='/'+this.value+'/employees'; this.form.submit()"
+<<<<<<< Updated upstream
                                             class="text-sm border-gray-300 rounded">
+=======
+                                            class="text-xs border border-gray-300 rounded-lg py-1 pl-1.5 pr-5 bg-white text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
+>>>>>>> Stashed changes
                                         @foreach (Department::all() as $dept)
                                             <option value="{{ $dept->id }}" {{ $dept->id == $currentDptid ? 'selected' : '' }}>
                                                 {{ $dept->name }}
@@ -77,8 +142,52 @@
                                     </select>
                                 </form>
                             @endif
+<<<<<<< Updated upstream
                             <a href="{{ route('notifications.index') }}" class="relative text-sm text-gray-600 hover:text-gray-900">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+=======
+
+                            <div class="relative" id="user-dropdown">
+                                <button id="user-dropdown-btn"
+                                        class="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-150">
+                                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                                    <span class="hidden sm:inline">{{ $user->name }}</span>
+                                    <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+                                <div id="user-dropdown-menu"
+                                     class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
+                                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                        Profile
+                                    </a>
+                                    <a href="{{ route('password.edit') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                        Change Password
+                                    </a>
+                                    <hr class="my-1 border-gray-100">
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                            Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <button id="mobile-menu-btn" class="lg:hidden p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                <svg id="menu-icon-open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                </svg>
+                                <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                            <a href="{{ route('notifications.index') }}" class="relative text-gray-600 hover:text-gray-900">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+>>>>>>> Stashed changes
                                 @if ($unreadCount > 0)
                                     <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{{ min($unreadCount, 9) }}</span>
                                 @endif
@@ -89,14 +198,84 @@
                                 <button type="submit" class="text-sm text-gray-600 hover:text-gray-900">Logout</button>
                             </form>
                         @else
+<<<<<<< Updated upstream
                             <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-gray-900">Login</a>
                             @if (Route::has('register'))
                                 <a href="{{ route('register') }}" class="text-sm text-gray-600 hover:text-gray-900">Register</a>
                             @endif
+=======
+                            <div class="flex items-center gap-1.5">
+                                <a href="{{ route('login') }}" class="px-2 py-1 text-xs font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">Login</a>
+                                @if (Route::has('register'))
+                                    <a href="{{ route('register') }}" class="px-2 py-1 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">Register</a>
+                                @endif
+                            </div>
+>>>>>>> Stashed changes
                         @endauth
                     </div>
                 </div>
             </div>
+<<<<<<< Updated upstream
+=======
+
+            @auth
+                <div id="mobile-menu" class="hidden lg:hidden border-t border-gray-200 bg-white">
+                    <div class="px-3 py-2 space-y-0.5">
+                        @if ($isSuperuser)
+                            <form method="GET" action="{{ url('/' . $currentDptid . '/employees') }}" class="pb-2">
+                                <select name="dpt_switch_mobile" onchange="this.form.action='/'+this.value+'/employees'; this.form.submit()"
+                                        class="w-full text-xs border border-gray-300 rounded-lg py-1.5 px-2 bg-white text-gray-700">
+                                    @foreach (Department::all() as $dept)
+                                        <option value="{{ $dept->id }}" {{ $dept->id == $currentDptid ? 'selected' : '' }}>
+                                            {{ $dept->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        @endif
+
+                        <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-2 py-2 text-sm font-medium rounded-lg {{ $isActive('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-100' }}">
+                            {!! svg_icon('dashboard', $isActive('dashboard') ? '#4338CA' : '#6B7280') !!}
+                            Dashboard
+                        </a>
+
+                        @foreach ($navItems as $item)
+                            @php
+                                $href = match (true) {
+                                    $item['route'] === 'settings.index' => route('settings.index'),
+                                    $item['route'] === 'employees' => route('employees.index', ['dptid' => $currentDptid]),
+                                    $item['route'] === 'leave' => route('leave.index', ['dptid' => $currentDptid]),
+                                    $item['route'] === 'attendance' => route('attendance.index', ['dptid' => $currentDptid]),
+                                    $item['route'] === 'payroll' => route('payroll.index', ['dptid' => $currentDptid]),
+                                    $item['route'] === 'recruitment' => route('recruitment.index', ['dptid' => $currentDptid]),
+                                    $item['route'] === 'leave.my' => route('leave.my', ['dptid' => $currentDptid]),
+                                    $item['route'] === 'attendance.my' => route('attendance.my', ['dptid' => $currentDptid]),
+                                    default => '#',
+                                };
+                                $active = $isActive($item['route']);
+                            @endphp
+                            <a href="{{ $href }}"
+                               class="flex items-center gap-2 px-2 py-2 text-sm font-medium rounded-lg {{ $active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-100' }}">
+                                <span class="shrink-0">{!! svg_icon($item['icon'], $active ? '#4338CA' : '#6B7280') !!}</span>
+                                {{ $item['label'] }}
+                            </a>
+                        @endforeach
+
+                        @if ($onPersonalPage && ($isSuperuser || $isDeptAdmin))
+                            <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}"
+                               class="flex items-center gap-2 px-2 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg">
+                                &larr; Admin Panel
+                            </a>
+                        @elseif (!$onPersonalPage && ($isSuperuser || $isDeptAdmin))
+                            <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}"
+                               class="flex items-center gap-2 px-2 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg">
+                                My Panel &rarr;
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            @endauth
+>>>>>>> Stashed changes
         </nav>
 
         <main>
