@@ -57,9 +57,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
             Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
             Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+            Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
             Route::get('/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
             Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
             Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+            Route::post('/employees/{employee}/documents', [EmployeeController::class, 'uploadDocument'])->name('employees.documents.upload');
+            Route::delete('/employees/{employee}/documents/{document}', [EmployeeController::class, 'destroyDocument'])->name('employees.documents.destroy');
             Route::get('/leave', [LeaveController::class, 'index'])->name('leave.index');
             Route::get('/leave/{leave}/edit', [LeaveController::class, 'edit'])->name('leave.edit');
             Route::put('/leave/{leave}', [LeaveController::class, 'update'])->name('leave.update');
