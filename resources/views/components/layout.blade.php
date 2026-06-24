@@ -7,6 +7,7 @@
     $routeDptid = request()->route('dptid');
     $currentDptid = $routeDptid ?? ($isSuperuser ? Department::value('id') : $user?->department_id);
     $routeName = request()->route()?->getName();
+    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'panel.'));
     $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my');
     $unreadCount = $user ? NotificationModel::forUser($user)->unread()->count() : 0;
 @endphp
@@ -34,6 +35,7 @@
 
                                 @if ($isSuperuser || ($isDeptAdmin && $currentDptid))
                                     @if ($onPersonalPage)
+                                        <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Panel</a>
                                         <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Leave</a>
                                         <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Attendance</a>
                                         @if ($isSuperuser)
@@ -51,9 +53,10 @@
                                             <a href="{{ route('settings.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Settings</a>
                                         @endif
                                         <span class="text-xs text-gray-300">|</span>
-                                        <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">My Panel →</a>
+                                        <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">My Panel →</a>
                                     @endif
                                 @elseif ($currentDptid)
+                                    <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Panel</a>
                                     <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Leave</a>
                                     <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Attendance</a>
                                 @endif
