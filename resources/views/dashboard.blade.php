@@ -27,7 +27,7 @@
                 <p class="text-sm text-gray-600 mb-1"><span class="font-medium">{{ $totalEmployees }}</span> total</p>
                 <p class="text-sm text-gray-600 mb-4"><span class="font-medium">{{ $activeEmployees }}</span> active</p>
                 <div class="mt-auto">
-                    @if ($isSuperuser || $isDeptAdmin)
+                    @if (($isSuperuser || $isDeptAdmin) && $currentDptid)
                         <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">View Employees &rarr;</a>
                     @else
                         <span class="text-sm text-gray-400">Contact your admin for employee details</span>
@@ -50,8 +50,10 @@
                 @endif
                 <p class="text-sm text-gray-600 mb-4"><span class="font-medium">{{ $myPendingLeaves }}</span> my pending</p>
                 <div class="mt-auto flex gap-3">
-                    <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">My Leave &rarr;</a>
-                    @if ($isSuperuser || $isDeptAdmin)
+                    @if ($currentDptid)
+                        <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">My Leave &rarr;</a>
+                    @endif
+                    @if (($isSuperuser || $isDeptAdmin) && $currentDptid)
                         <a href="{{ route('leave.index', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Manage &rarr;</a>
                     @endif
                 </div>
@@ -81,8 +83,10 @@
                     <p class="text-sm text-gray-600 mb-1"><span class="font-medium">{{ $todayCheckedIn }}</span> checked in today</p>
                 @endif
                 <div class="mt-auto flex gap-3">
-                    <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">My Attendance &rarr;</a>
-                    @if ($isSuperuser || $isDeptAdmin)
+                    @if ($currentDptid)
+                        <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">My Attendance &rarr;</a>
+                    @endif
+                    @if (($isSuperuser || $isDeptAdmin) && $currentDptid)
                         <a href="{{ route('attendance.index', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Manage &rarr;</a>
                     @endif
                 </div>
@@ -108,8 +112,12 @@
                     <p class="text-sm text-gray-600 mb-1"><span class="font-medium">{{ $totalPayrolls }}</span> total records</p>
                 @endif
                 <div class="mt-auto">
-                    @if ($isSuperuser || $isDeptAdmin)
-                        <a href="{{ route('payroll.index', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">View Payroll &rarr;</a>
+                    @if ($currentDptid)
+                        @if ($isSuperuser || $isDeptAdmin)
+                            <a href="{{ route('payroll.index', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">View Payroll &rarr;</a>
+                        @else
+                            <span class="text-sm text-gray-400">Contact admin for payroll details</span>
+                        @endif
                     @else
                         <span class="text-sm text-gray-400">Contact admin for payroll details</span>
                     @endif
@@ -129,7 +137,7 @@
                 <p class="text-sm text-gray-600 mb-1"><span class="font-medium">{{ $activeVacancies }}</span> active vacancies</p>
                 <p class="text-sm text-gray-600 mb-4"><span class="font-medium">{{ $totalApplications }}</span> applications</p>
                 <div class="mt-auto">
-                    @if ($isSuperuser || $isDeptAdmin)
+                    @if ($currentDptid && ($isSuperuser || $isDeptAdmin))
                         <a href="{{ route('recruitment.index', ['dptid' => $currentDptid]) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">View Recruitment &rarr;</a>
                     @else
                         <a href="{{ route('jobs.list') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">Browse Jobs &rarr;</a>
