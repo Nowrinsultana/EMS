@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Attendance;
+use App\Models\CandidateApplication;
+use App\Models\Department;
+use App\Models\JobVacancy;
+use App\Models\Leave;
+use App\Models\Payroll;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $user = Auth::user();
+        $isSuperuser = $user->superuser;
+        $isDeptAdmin = $user->isadmin;
+        $departmentId = $user->department_id;
+
+        // Employees
+        $totalEmployees = $isSuperuser
+            ? User::count()
+            : User::where('department_id', $departmentId)->count();
+
+        $activeEmployees = $isSuperuser
+            ? User::where('status', true)->count()
+            : User::where('department_id', $departmentId)->where('status', true)->count();
+
+        // Leave
+        $pendingLeaves = $isSuperuser
+            ? Leave::where('status', 'pending')->count()
+            : Leave::where('department_id', $departmentId)->where('status', 'pending')->count();
+
+        $myPendingLeaves = Leave::where('staff_id', $user->id)->where('status', 'pending')->count();
+
+        // Attendance today
+        $today = now()->format('Y-m-d');
+        $myAttendance = Attendance::where('user_id', $user->id)->where('date', $today)->first();
+
+        $todayCheckedIn = $isSuperuser
+            ? Attendance::where('date', $today)->whereNotNull('check_in')->count()
+            : Attendance::where('department_id', $departmentId)->where('date', $today)->whereNotNull('check_in')->count();
+
+        // Payroll
+        $latestPayroll = Payroll::where('user_id', $user->id)->latest('payroll_month')->first();
+
+        $totalPayrolls = $isSuperuser || $isDeptAdmin
+            ? ($isSuperuser
+                ? Payroll::count()
+                : Payroll::where('department_id', $departmentId)->count())
+            : null;
+
+        // Recruitment
+        $activeVacancies = $isSuperuser
+            ? JobVacancy::where('status', 'open')->count()
+            : JobVacancy::where('department_id', $departmentId)->where('status', 'open')->count();
+
+        $totalApplications = $isSuperuser
+            ? CandidateApplication::count()
+            : CandidateApplication::whereHas('vacancy', fn ($q) => $q->where('department_id', $departmentId))->count();
+
+        // Settings (superuser only)
+        $totalDepartments = Department::count();
+
+        return view('dashboard', [
+            'totalEmployees' => $totalEmployees,
+            'activeEmployees' => $activeEmployees,
+            'pendingLeaves' => $pendingLeaves,
+            'myPendingLeaves' => $myPendingLeaves,
+            'myAttendance' => $myAttendance,
+            'todayCheckedIn' => $todayCheckedIn,
+            'latestPayroll' => $latestPayroll,
+            'totalPayrolls' => $totalPayrolls,
+            'activeVacancies' => $activeVacancies,
+            'totalApplications' => $totalApplications,
+            'totalDepartments' => $totalDepartments,
+            'isSuperuser' => $isSuperuser,
+            'isDeptAdmin' => $isDeptAdmin,
+        ]);
+    }
+}
