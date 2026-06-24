@@ -10,6 +10,7 @@ use App\Models\Interview;
 use App\Models\JobVacancy;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class RecruitmentController extends Controller
@@ -22,7 +23,9 @@ class RecruitmentController extends Controller
     public function applications(Request $request, $dptid, JobVacancy $vacancy): View { $this->belongs($vacancy, $dptid); $applications = $vacancy->applications()->with('interviews')->latest()->get(); return view('recruitment.applications', compact('dptid','vacancy','applications')); }
     public function updateApplication(Request $request, $dptid, CandidateApplication $application): RedirectResponse { $this->belongs($application->vacancy, $dptid); $data = $request->validate(['status' => ['required','in:new,reviewing,interview,selected,rejected']]); $application->update($data); return back()->with('status', 'Candidate status updated.'); }
     public function storeInterview(StoreInterviewRequest $request, $dptid, CandidateApplication $application): RedirectResponse { $this->belongs($application->vacancy, $dptid); Interview::create($request->validated() + ['candidate_application_id' => $application->id]); $application->update(['status' => 'interview']); return back()->with('status', 'Interview scheduled.'); }
+    public function publicList(): View { $vacancies = JobVacancy::with('department')->where('status', 'open')->where(fn ($q) => $q->whereNull('closing_date')->orWhere('closing_date', '>=', now()))->latest()->get(); return view('recruitment.public-list', compact('vacancies')); }
     public function applicationForm(JobVacancy $vacancy): View { abort_if($vacancy->status !== 'open' || ($vacancy->closing_date && $vacancy->closing_date->isPast()), 404); return view('recruitment.apply', compact('vacancy')); }
-    public function apply(StoreCandidateApplicationRequest $request, JobVacancy $vacancy): RedirectResponse { abort_if($vacancy->status !== 'open' || ($vacancy->closing_date && $vacancy->closing_date->isPast()), 404); CandidateApplication::create($request->validated() + ['job_vacancy_id' => $vacancy->id]); return back()->with('status', 'Your application has been submitted successfully.'); }
+    public function apply(StoreCandidateApplicationRequest $request, JobVacancy $vacancy): RedirectResponse { abort_if($vacancy->status !== 'open' || ($vacancy->closing_date && $vacancy->closing_date->isPast()), 404); $data = $request->validated(); unset($data['resume']); if ($request->hasFile('resume')) { $data['resume_path'] = $request->file('resume')->store('resumes'); } CandidateApplication::create($data + ['job_vacancy_id' => $vacancy->id]); return back()->with('status', 'Your application has been submitted successfully.'); }
+    public function downloadResume($dptid, CandidateApplication $application) { $this->belongs($application->vacancy, $dptid); abort_unless($application->resume_path && Storage::exists($application->resume_path), 404); return Storage::download($application->resume_path, 'resume-'.$application->id.'.pdf', ['Content-Type' => 'application/pdf']); }
     private function belongs(JobVacancy $vacancy, $dptid): void { abort_if((int) $vacancy->department_id !== (int) $dptid, 404); }
 }

@@ -12,7 +12,7 @@ class Leave extends Model
     use HasFactory;
 
     protected $fillable = [
-        'department_id', 'staff_id', 'start_date', 'end_date', 'status',
+        'department_id', 'staff_id', 'start_date', 'end_date', 'status', 'reason',
     ];
 
     protected function casts(): array

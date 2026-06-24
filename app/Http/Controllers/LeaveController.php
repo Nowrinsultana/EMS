@@ -25,6 +25,7 @@ class LeaveController extends Controller
     public function edit(Request $request, $dptid, Leave $leave): View
     {
         abort_if((int) $leave->department_id !== (int) $dptid, 404);
+        abort_if($leave->status === LeaveStatus::Approved, 403);
 
         return view('leave.edit', compact('leave', 'dptid'));
     }
@@ -32,14 +33,38 @@ class LeaveController extends Controller
     public function update(Request $request, $dptid, Leave $leave): RedirectResponse
     {
         abort_if((int) $leave->department_id !== (int) $dptid, 404);
+        abort_if($leave->status === LeaveStatus::Approved, 403);
+
+        $oldStatus = $leave->status;
+        $oldStartDate = $leave->start_date->format('Y-m-d');
+        $oldEndDate = $leave->end_date->format('Y-m-d');
 
         $data = $request->validate([
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'status' => ['required', 'string', 'in:pending,approved,declined'],
+            'reason' => ['nullable', 'string', 'max:500'],
         ]);
 
         $leave->update($data);
+
+        $newStatus = $leave->status;
+        $newStartDate = $leave->start_date->format('Y-m-d');
+        $newEndDate = $leave->end_date->format('Y-m-d');
+
+        $wasApproved = $oldStatus === LeaveStatus::Approved;
+        $nowApproved = $newStatus === LeaveStatus::Approved;
+
+        if ($wasApproved !== $nowApproved || ($wasApproved && ($oldStartDate !== $newStartDate || $oldEndDate !== $newEndDate))) {
+            $leave->staff->syncLeaveDates(
+                nowApproved: $nowApproved,
+                startDate: $newStartDate,
+                endDate: $newEndDate,
+                wasApproved: $wasApproved,
+                oldStartDate: $oldStartDate,
+                oldEndDate: $oldEndDate,
+            );
+        }
 
         return redirect()->route('leave.index', ['dptid' => $dptid])
             ->with('status', 'Leave updated successfully.');
@@ -49,7 +74,17 @@ class LeaveController extends Controller
     {
         abort_if((int) $leave->department_id !== (int) $dptid, 404);
 
+        $wasApproved = $leave->status === LeaveStatus::Approved;
+
         $leave->update(['status' => LeaveStatus::Approved]);
+
+        if (!$wasApproved) {
+            $leave->staff->syncLeaveDates(
+                nowApproved: true,
+                startDate: $leave->start_date->format('Y-m-d'),
+                endDate: $leave->end_date->format('Y-m-d'),
+            );
+        }
 
         return back()->with('status', 'Leave approved.');
     }
@@ -58,7 +93,18 @@ class LeaveController extends Controller
     {
         abort_if((int) $leave->department_id !== (int) $dptid, 404);
 
+        $wasApproved = $leave->status === LeaveStatus::Approved;
+
         $leave->update(['status' => LeaveStatus::Declined]);
+
+        if ($wasApproved) {
+            $leave->staff->syncLeaveDates(
+                nowApproved: false,
+                startDate: $leave->start_date->format('Y-m-d'),
+                endDate: $leave->end_date->format('Y-m-d'),
+                wasApproved: true,
+            );
+        }
 
         return back()->with('status', 'Leave declined.');
     }

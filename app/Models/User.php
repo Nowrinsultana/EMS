@@ -24,6 +24,68 @@ class User extends Authenticatable
         return $this->belongsTo(Department::class);
     }
 
+    public function syncLeaveDates(
+        bool $nowApproved,
+        string $startDate,
+        string $endDate,
+        ?bool $wasApproved = null,
+        ?string $oldStartDate = null,
+        ?string $oldEndDate = null,
+    ): void {
+        $leaveDates = $this->leave_dates ?? [];
+        $balance = $this->leave_balance ?? 0;
+
+        $datesInRange = [];
+        $period = new \DatePeriod(
+            new \DateTime($startDate),
+            new \DateInterval('P1D'),
+            (new \DateTime($endDate))->modify('+1 day'),
+        );
+        foreach ($period as $dt) {
+            $datesInRange[] = $dt->format('Y-m-d');
+        }
+
+        if ($wasApproved && !$nowApproved) {
+            $oldDates = [];
+            if ($oldStartDate && $oldEndDate) {
+                $oldPeriod = new \DatePeriod(
+                    new \DateTime($oldStartDate),
+                    new \DateInterval('P1D'),
+                    (new \DateTime($oldEndDate))->modify('+1 day'),
+                );
+                foreach ($oldPeriod as $dt) {
+                    $oldDates[] = $dt->format('Y-m-d');
+                }
+            }
+            $this->leave_dates = array_values(array_diff($leaveDates, $oldDates ?: $datesInRange));
+            $oldDays = $oldStartDate
+                ? (new \DateTime($oldStartDate))->diff(new \DateTime($oldEndDate ?? $endDate))->days + 1
+                : count($datesInRange);
+            $this->leave_balance = $balance + $oldDays;
+        } elseif (!$wasApproved && $nowApproved) {
+            $this->leave_dates = array_values(array_unique(array_merge($leaveDates, $datesInRange)));
+            $this->leave_balance = max(0, $balance - count($datesInRange));
+        } elseif ($wasApproved && $nowApproved && $oldStartDate && $oldEndDate && ($oldStartDate !== $startDate || $oldEndDate !== $endDate)) {
+            $oldDates = [];
+            $oldPeriod = new \DatePeriod(
+                new \DateTime($oldStartDate),
+                new \DateInterval('P1D'),
+                (new \DateTime($oldEndDate))->modify('+1 day'),
+            );
+            foreach ($oldPeriod as $dt) {
+                $oldDates[] = $dt->format('Y-m-d');
+            }
+            $this->leave_dates = array_values(array_unique(array_merge(
+                array_diff($leaveDates, $oldDates),
+                $datesInRange,
+            )));
+            $oldDays = (new \DateTime($oldStartDate))->diff(new \DateTime($oldEndDate))->days + 1;
+            $this->leave_balance = max(0, $balance + $oldDays - count($datesInRange));
+        }
+
+        $this->save();
+    }
+
     public function basicSalaries(): HasMany
     {
         return $this->hasMany(BasicSalary::class);
@@ -37,6 +99,11 @@ class User extends Authenticatable
     public function payrollAdjustments(): HasMany
     {
         return $this->hasMany(PayrollAdjustment::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
     }
 
     /**

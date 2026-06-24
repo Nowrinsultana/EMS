@@ -8,7 +8,11 @@ use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MyLeaveController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\MyAttendanceController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\PersonalPanelController;
 use App\Http\Controllers\RecruitmentController;
 use App\Http\Controllers\Settings\DepartmentController;
 use Illuminate\Support\Facades\Route;
@@ -27,11 +31,12 @@ Route::post('logout', [LoginController::class, 'destroy'])->name('logout')->midd
 Route::get('setup-password/{token}', [PasswordSetupController::class, 'show'])->name('password.setup');
 Route::post('setup-password', [PasswordSetupController::class, 'store'])->name('password.setup.store');
 
+Route::get('/jobs', [RecruitmentController::class, 'publicList'])->name('jobs.list');
 Route::get('/jobs/{vacancy}/apply', [RecruitmentController::class, 'applicationForm'])->name('jobs.apply');
 Route::post('/jobs/{vacancy}/apply', [RecruitmentController::class, 'apply'])->name('jobs.apply.store');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -39,11 +44,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/password', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
 
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::put('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::put('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+
     Route::prefix('{dptid}')->middleware('dept')->group(function () {
         Route::get('/leave/my', [MyLeaveController::class, 'index'])->name('leave.my');
         Route::get('/leave/my/create', [MyLeaveController::class, 'create'])->name('leave.my.create');
         Route::post('/leave/my', [MyLeaveController::class, 'store'])->name('leave.my.store');
-        Route::get('/attendance/my', fn () => view('attendance.my'))->name('attendance.my');
+        Route::get('/leave/my/{leave}/edit', [MyLeaveController::class, 'edit'])->name('leave.my.edit');
+        Route::put('/leave/my/{leave}', [MyLeaveController::class, 'update'])->name('leave.my.update');
+        Route::get('/attendance/my', [MyAttendanceController::class, 'index'])->name('attendance.my');
+        Route::post('/attendance/check-in', [MyAttendanceController::class, 'checkIn'])->name('attendance.check-in');
+        Route::post('/attendance/check-out', [MyAttendanceController::class, 'checkOut'])->name('attendance.check-out');
+        Route::get('/attendance/scan/{token}', [MyAttendanceController::class, 'scan'])->name('attendance.scan');
+        Route::get('/panel', [PersonalPanelController::class, 'index'])->name('panel.index');
+        Route::post('/panel/upload', [PersonalPanelController::class, 'upload'])->name('panel.upload');
+        Route::delete('/panel/documents/{document}', [PersonalPanelController::class, 'destroy'])->name('panel.destroy');
+        Route::get('/panel/documents/{document}/download', [PersonalPanelController::class, 'download'])->name('panel.download');
 
         Route::middleware('admin')->group(function () {
             Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
@@ -57,7 +75,11 @@ Route::middleware('auth')->group(function () {
             Route::put('/leave/{leave}', [LeaveController::class, 'update'])->name('leave.update');
             Route::put('/leave/{leave}/approve', [LeaveController::class, 'approve'])->name('leave.approve');
             Route::put('/leave/{leave}/decline', [LeaveController::class, 'decline'])->name('leave.decline');
-            Route::get('/attendance', fn () => view('attendance.index'))->name('attendance.index');
+            Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+            Route::get('/attendance/summary', [AttendanceController::class, 'summary'])->name('attendance.summary');
+            Route::get('/attendance/qr', [AttendanceController::class, 'qr'])->name('attendance.qr');
+            Route::post('/attendance/qr/checkout', [AttendanceController::class, 'generateCheckOutQr'])->name('attendance.qr.checkout');
+            Route::post('/attendance/mark', [AttendanceController::class, 'mark'])->name('attendance.mark');
             Route::get('/payroll', [PayrollController::class, 'index'])->name('payroll.index');
             Route::post('/payroll/salaries', [PayrollController::class, 'storeSalary'])->name('payroll.salaries.store');
             Route::post('/payroll/adjustments', [PayrollController::class, 'storeAdjustment'])->name('payroll.adjustments.store');
@@ -70,6 +92,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/recruitment/vacancies/{vacancy}', [RecruitmentController::class, 'update'])->name('recruitment.vacancies.update');
             Route::get('/recruitment/vacancies/{vacancy}/applications', [RecruitmentController::class, 'applications'])->name('recruitment.applications');
             Route::put('/recruitment/applications/{application}', [RecruitmentController::class, 'updateApplication'])->name('recruitment.applications.update');
+            Route::get('/recruitment/applications/{application}/resume', [RecruitmentController::class, 'downloadResume'])->name('recruitment.applications.resume');
             Route::post('/recruitment/applications/{application}/interviews', [RecruitmentController::class, 'storeInterview'])->name('recruitment.interviews.store');
         });
     });

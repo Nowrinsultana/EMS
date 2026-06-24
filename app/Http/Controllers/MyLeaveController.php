@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\LeaveStatus;
 use App\Models\Leave;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,17 +31,105 @@ class MyLeaveController extends Controller
         $data = $request->validate([
             'start_date' => ['required', 'date', 'after_or_equal:today'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'reason' => ['nullable', 'string', 'max:500'],
         ]);
+
+        $overlapError = $this->checkConflict($user->id, $data['start_date'], $data['end_date']);
+        if ($overlapError) {
+            return back()->withErrors(['start_date' => $overlapError])->withInput();
+        }
 
         Leave::create([
             'department_id' => $user->department_id,
             'staff_id' => $user->id,
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
+            'reason' => $data['reason'],
             'status' => 'pending',
         ]);
 
         return redirect()->route('leave.my', ['dptid' => $request->route('dptid')])
             ->with('status', 'Leave request submitted.');
+    }
+
+    public function edit($dptid, Leave $leave): View
+    {
+        abort_if($leave->staff_id !== request()->user()->id, 403);
+        abort_if($leave->status !== LeaveStatus::Pending, 403);
+
+        return view('leave.my-edit', compact('leave', 'dptid'));
+    }
+
+    public function update(Request $request, $dptid, Leave $leave): RedirectResponse
+    {
+        abort_if($leave->staff_id !== $request->user()->id, 403);
+        abort_if($leave->status !== LeaveStatus::Pending, 403);
+
+        $data = $request->validate([
+            'start_date' => ['required', 'date', 'after_or_equal:today'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $overlapError = $this->checkConflict(
+            $request->user()->id,
+            $data['start_date'],
+            $data['end_date'],
+            $leave->id,
+        );
+        if ($overlapError) {
+            return back()->withErrors(['start_date' => $overlapError])->withInput();
+        }
+
+        $leave->update($data);
+
+        return redirect()->route('leave.my', ['dptid' => $dptid])
+            ->with('status', 'Leave request updated.');
+    }
+
+    private function checkConflict(int $userId, string $startDate, string $endDate, ?int $excludeLeaveId = null): ?string
+    {
+        $conflictDates = [];
+
+        $user = \App\Models\User::find($userId);
+        $approvedDates = $user?->leave_dates ?? [];
+
+        $pendingLeaves = Leave::where('staff_id', $userId)
+            ->where('status', LeaveStatus::Pending)
+            ->when($excludeLeaveId, fn ($q) => $q->where('id', '!=', $excludeLeaveId))
+            ->get();
+
+        $period = new \DatePeriod(
+            new \DateTime($startDate),
+            new \DateInterval('P1D'),
+            (new \DateTime($endDate))->modify('+1 day'),
+        );
+        foreach ($period as $dt) {
+            $dateStr = $dt->format('Y-m-d');
+
+            if (in_array($dateStr, $approvedDates)) {
+                $conflictDates[] = $dateStr;
+                continue;
+            }
+
+            foreach ($pendingLeaves as $pl) {
+                $plStart = $pl->start_date instanceof \Carbon\Carbon
+                    ? $pl->start_date->format('Y-m-d') : $pl->start_date;
+                $plEnd = $pl->end_date instanceof \Carbon\Carbon
+                    ? $pl->end_date->format('Y-m-d') : $pl->end_date;
+
+                if ($dateStr >= $plStart && $dateStr <= $plEnd) {
+                    $conflictDates[] = $dateStr;
+                    break;
+                }
+            }
+        }
+
+        if ($conflictDates) {
+            $unique = array_unique($conflictDates);
+            return 'You already have a leave request on ' . implode(', ', $unique) . '.';
+        }
+
+        return null;
     }
 }

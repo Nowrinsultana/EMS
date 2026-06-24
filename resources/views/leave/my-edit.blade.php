@@ -1,15 +1,10 @@
 <x-layout>
     <div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow">
-        <h1 class="text-2xl font-bold mb-6">Edit Leave</h1>
+        <h1 class="text-2xl font-bold mb-6">Edit Leave Request</h1>
 
-        <form method="POST" action="{{ route('leave.update', ['dptid' => $dptid, 'leave' => $leave]) }}">
+        <form method="POST" action="{{ route('leave.my.update', ['dptid' => $dptid, 'leave' => $leave]) }}">
             @csrf
             @method('PUT')
-
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700">Staff</label>
-                <p class="mt-1 text-sm text-gray-900">{{ $leave->staff?->name }}</p>
-            </div>
 
             <div class="mb-4">
                 <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
@@ -38,22 +33,9 @@
                 @enderror
             </div>
 
-            <div class="mb-4">
-                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                <select id="status" name="status" required
-                        class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <option value="pending" {{ old('status', $leave->status->value) === 'pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="approved" {{ old('status', $leave->status->value) === 'approved' ? 'selected' : '' }}>Approved</option>
-                    <option value="declined" {{ old('status', $leave->status->value) === 'declined' ? 'selected' : '' }}>Declined</option>
-                </select>
-                @error('status')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
             <button type="submit"
                     class="w-full py-2 px-4 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-                Update Leave
+                Update Request
             </button>
         </form>
     </div>
