@@ -1,58 +1,225 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Employee Management System (EMS)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+EMS is a Laravel-based office management application for managing employees, departments, leave, payroll, and recruitment from a single web interface.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Core administration
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Authentication, registration, password setup, profile management, and password changes
+- Department management for superusers
+- Department-scoped employee management
+- Role-based access for staff, department admins, and superusers
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Leave management
 
-## Learning Laravel
+- Staff leave requests
+- Admin approval and decline workflow
+- Leave balance updates and date-overlap checks
+- Personal leave view for staff
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Payroll management
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Basic monthly salary management with an effective date
+- Monthly bonuses and deductions
+- Monthly payroll calculation per active employee
+- Downloadable PDF payslips
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Recruitment management
 
-## Agentic Development
+- Job vacancy posting and editing
+- Public candidate application form
+- PDF résumé upload (up to 5 MB)
+- Private résumé downloads for authorized department admins
+- Candidate tracking: New, Reviewing, Interview, Selected, or Rejected
+- Interview scheduling and notes
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Technology
 
-```bash
-composer require laravel/boost --dev
+- PHP 8.3+
+- Laravel 13
+- MySQL
+- Laravel Sanctum
+- Blade, Tailwind CSS, Vite
 
-php artisan boost:install
+## Requirements
+
+- PHP 8.3 or newer with the OpenSSL extension enabled
+- Composer
+- Node.js and npm
+- MySQL 8+ or compatible MySQL server
+
+## Installation
+
+1. Clone the repository and open the project directory.
+
+   ```bash
+   git clone <repository-url>
+   cd EMS
+   ```
+
+2. Install PHP dependencies.
+
+   ```bash
+   composer install
+   ```
+
+3. Create your local environment file and application key.
+
+   ```bash
+   copy .env.example .env
+   php artisan key:generate
+   ```
+
+   On macOS or Linux, use `cp .env.example .env` instead.
+
+4. Update the database section in `.env`.
+
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=ems
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+5. Create the `ems` MySQL database, then run migrations.
+
+   ```bash
+   php artisan migrate
+   ```
+
+6. Install and build frontend assets.
+
+   ```bash
+   npm install
+   npm run build
+   ```
+
+7. Start the application.
+
+   ```bash
+   php artisan serve
+   ```
+
+   Open `http://127.0.0.1:8000` in your browser.
+
+## Roles and access
+
+| Role | Access |
+| --- | --- |
+| Staff | Profile, password, personal leave, and personal attendance pages |
+| Department admin | Department employees, leave management, attendance, payroll, and recruitment |
+| Superuser | All department-admin access across departments, plus department settings |
+
+Payroll and recruitment pages are department-scoped. A department admin can access only their own department; a superuser can switch departments from the top navigation.
+
+## Payroll workflow
+
+1. Sign in as a department admin or superuser.
+2. Open **Payroll** from the top navigation, or visit `/{department-id}/payroll`.
+3. Save each employee's basic salary and effective date.
+4. Add any monthly bonus or deduction.
+5. Choose a month and select **Calculate Monthly Payroll**.
+6. Use **PDF Slip** in the payroll table to download a payslip.
+
+Net salary is calculated as:
+
+```text
+Net salary = Basic salary + Total bonus - Total deduction
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Recruitment workflow
 
-## Contributing
+1. Sign in as a department admin or superuser.
+2. Open **Recruitment** and select **Post Vacancy**.
+3. Complete the vacancy details and set the status to **Open**.
+4. Share the generated public application URL:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   ```text
+   /jobs/{vacancy-id}/apply
+   ```
 
-## Code of Conduct
+5. Candidates submit their personal information, cover letter, and optional PDF résumé.
+6. Open **Candidates** for a vacancy to download résumés, update candidate status, and schedule interviews.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Résumé files are stored on Laravel's private `local` disk. They are available only through the authenticated department-admin download route and are not public web files.
 
-## Security Vulnerabilities
+## Useful commands
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+# Run migrations
+php artisan migrate
 
-## License
+# Run automated tests
+php artisan test
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Format PHP source code
+./vendor/bin/pint
+
+# Start Laravel, Vite, and queue worker together
+composer run dev
+```
+
+On Windows PowerShell, use:
+
+```powershell
+.\vendor\bin\pint
+```
+
+## Project structure
+
+```text
+app/Http/Controllers/     Web and API controllers
+app/Http/Requests/        Request validation classes
+app/Http/Middleware/      Role and department access middleware
+app/Models/               Eloquent models
+database/migrations/      Database schema migrations
+resources/views/          Blade views
+routes/web.php            Web routes
+routes/api.php            API routes
+```
+
+## API endpoints
+
+All API endpoints require Sanctum authentication.
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/api/profile` | Get the current user's profile |
+| PUT | `/api/profile` | Update the current user's profile |
+| PUT | `/api/password` | Change the current user's password |
+
+## Troubleshooting
+
+### Composer reports that OpenSSL is unavailable
+
+Enable the `openssl` extension in the `php.ini` file used by your command-line PHP installation, then restart the terminal and run:
+
+```bash
+composer install
+```
+
+Verify the active configuration file with:
+
+```bash
+php --ini
+```
+
+### A new feature is missing after pulling changes
+
+Run the latest migrations and rebuild assets:
+
+```bash
+php artisan migrate
+npm install
+npm run build
+```
+
+## Security notes
+
+- Do not commit `.env`, `vendor/`, `node_modules/`, or uploaded files.
+- Keep `APP_DEBUG=false` in production.
+- Use strong database credentials in production.
+- Candidate résumés should remain on private storage and be downloaded only through authorized application routes.
