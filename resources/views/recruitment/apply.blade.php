@@ -1,1 +1,29 @@
-<x-layout><div class="max-w-3xl mx-auto mt-10 px-4"><div class="bg-white rounded-lg shadow p-6"><h1 class="text-2xl font-bold">Apply: {{ $vacancy->title }}</h1><p class="text-gray-600 mt-1">{{ $vacancy->department->name }} · {{ $vacancy->location }} · {{ $vacancy->employment_type }}</p><div class="mt-5 prose max-w-none text-gray-700 whitespace-pre-line">{{ $vacancy->description }}</div>@if(session('status'))<p class="mt-5 p-3 bg-green-50 text-green-700 rounded">{{ session('status') }}</p>@else<form method="POST" action="{{ route('jobs.apply.store',['vacancy'=>$vacancy]) }}" class="mt-6 space-y-4">@csrf<div class="grid sm:grid-cols-2 gap-4"><input name="name" value="{{ old('name') }}" placeholder="Full name" class="border rounded p-2" required><input name="email" value="{{ old('email') }}" type="email" placeholder="Email address" class="border rounded p-2" required></div><input name="phone_number" value="{{ old('phone_number') }}" placeholder="Phone number" class="w-full border rounded p-2" required><input name="resume_url" value="{{ old('resume_url') }}" placeholder="Resume link (optional)" class="w-full border rounded p-2"><textarea name="cover_letter" rows="6" placeholder="Cover letter (optional)" class="w-full border rounded p-2">{{ old('cover_letter') }}</textarea><button class="bg-indigo-600 text-white px-5 py-2 rounded">Submit Application</button></form>@endif</div></div></x-layout>
+<x-layout>
+    <div class="max-w-3xl mx-auto mt-10 px-4">
+        <div class="bg-white rounded-lg shadow p-6">
+            <h1 class="text-2xl font-bold">Apply: {{ $vacancy->title }}</h1>
+            <p class="text-gray-600 mt-1">{{ $vacancy->department->name }} · {{ $vacancy->location }} · {{ $vacancy->employment_type }}</p>
+            <div class="mt-5 prose max-w-none text-gray-700 whitespace-pre-line">{{ $vacancy->description }}</div>
+
+            @if(session('status'))
+                <p class="mt-5 p-3 bg-green-50 text-green-700 rounded">{{ session('status') }}</p>
+            @else
+                <form method="POST" action="{{ route('jobs.apply.store', ['vacancy' => $vacancy]) }}" enctype="multipart/form-data" class="mt-6 space-y-4">
+                    @csrf
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <input name="name" value="{{ old('name') }}" placeholder="Full name" class="border rounded p-2" required>
+                        <input name="email" value="{{ old('email') }}" type="email" placeholder="Email address" class="border rounded p-2" required>
+                    </div>
+                    <input name="phone_number" value="{{ old('phone_number') }}" placeholder="Phone number" class="w-full border rounded p-2" required>
+                    <div>
+                        <label for="resume" class="block text-sm font-medium text-gray-700 mb-1">Resume (PDF, up to 5 MB)</label>
+                        <input id="resume" name="resume" type="file" accept="application/pdf,.pdf" class="w-full border rounded p-2 bg-white">
+                        @error('resume')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    </div>
+                    <textarea name="cover_letter" rows="6" placeholder="Cover letter (optional)" class="w-full border rounded p-2">{{ old('cover_letter') }}</textarea>
+                    <button class="bg-indigo-600 text-white px-5 py-2 rounded">Submit Application</button>
+                </form>
+            @endif
+        </div>
+    </div>
+</x-layout>

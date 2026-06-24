@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/recruitment/vacancies/{vacancy}', [RecruitmentController::class, 'update'])->name('recruitment.vacancies.update');
             Route::get('/recruitment/vacancies/{vacancy}/applications', [RecruitmentController::class, 'applications'])->name('recruitment.applications');
             Route::put('/recruitment/applications/{application}', [RecruitmentController::class, 'updateApplication'])->name('recruitment.applications.update');
+            Route::get('/recruitment/applications/{application}/resume', [RecruitmentController::class, 'downloadResume'])->name('recruitment.applications.resume');
             Route::post('/recruitment/applications/{application}/interviews', [RecruitmentController::class, 'storeInterview'])->name('recruitment.interviews.store');
         });
     });
