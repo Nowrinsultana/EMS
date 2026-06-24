@@ -7,10 +7,8 @@
     $routeDptid = request()->route('dptid');
     $currentDptid = $routeDptid ?? ($isSuperuser ? Department::value('id') : $user?->department_id);
     $routeName = request()->route()?->getName();
-    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'leave.my.'));
-    $isActive = fn ($patterns) => collect((array) $patterns)->contains(fn ($p) => str_starts_with($routeName ?? '', $p));
-    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'panel.'));
     $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my');
+    $isActive = fn ($patterns) => collect((array) $patterns)->contains(fn ($p) => str_starts_with($routeName ?? '', $p));
     $unreadCount = $user ? NotificationModel::forUser($user)->unread()->count() : 0;
 @endphp
 <!DOCTYPE html>
@@ -25,18 +23,18 @@
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-50">
         <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-xs">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
+            <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+                <div class="flex items-center justify-between h-12 lg:h-14">
 
-                    <div class="flex items-center gap-8">
-                        <a href="{{ url('/') }}" class="flex items-center gap-2 shrink-0">
-                            <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+                    <div class="flex items-center gap-1 sm:gap-2 lg:gap-4">
+                        <a href="{{ url('/') }}" class="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                            <svg class="w-5 h-5 lg:w-6 lg:h-6" viewBox="0 0 32 32" aria-hidden="true">
                                 <rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/>
                                 <path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/>
                                 <path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/>
                                 <line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/>
                             </svg>
-                            <span class="text-lg font-bold text-gray-900 tracking-tight">PALINDROME</span>
+                            <span class="text-xs sm:text-sm lg:text-base font-bold text-gray-900 tracking-tight">PALINDROME</span>
                         </a>
 
                         @auth
@@ -93,35 +91,35 @@
                                         $active = $isActive($item['route']);
                                     @endphp
                                     <a href="{{ $href }}"
-                                       class="flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150 {{ $active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' }}">
-                                        <span class="shrink-0">{{ svg_icon($item['icon'], $active ? '#4338CA' : '#6B7280') }}</span>
+                                       class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium rounded-lg transition-colors duration-150 {{ $active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' }}">
+                                        <span class="shrink-0">{!! svg_icon($item['icon'], $active ? '#4338CA' : '#6B7280') !!}</span>
                                         {{ $item['label'] }}
                                     </a>
                                 @endforeach
 
                                 @if ($onPersonalPage && ($isSuperuser || $isDeptAdmin))
-                                    <span class="mx-1 w-px h-5 bg-gray-200"></span>
+                                    <span class="mx-0.5 w-px h-4 bg-gray-200"></span>
                                     <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}"
-                                       class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
+                                       class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
                                         &larr; Admin Panel
                                     </a>
                                 @elseif (!$onPersonalPage && ($isSuperuser || $isDeptAdmin) && $routeName !== 'dashboard')
-                                    <span class="mx-1 w-px h-5 bg-gray-200"></span>
+                                    <span class="mx-0.5 w-px h-4 bg-gray-200"></span>
                                     <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}"
-                                       class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
+                                       class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
                                         My Panel &rarr;
                                     </a>
-                            @endif
+                                @endif
                             </div>
                         @endauth
                     </div>
 
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1 sm:gap-2">
                         @auth
                             @if ($isSuperuser)
                                 <form method="GET" action="{{ url('/' . $currentDptid . '/employees') }}" class="hidden sm:block">
                                     <select name="dpt_switch" onchange="this.form.action='/'+this.value+'/employees'; this.form.submit()"
-                                            class="text-xs border border-gray-300 rounded-lg py-1.5 pl-2 pr-7 bg-white text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
+                                            class="text-xs border border-gray-300 rounded-lg py-1 pl-1.5 pr-5 bg-white text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
                                         @foreach (Department::all() as $dept)
                                             <option value="{{ $dept->id }}" {{ $dept->id == $currentDptid ? 'selected' : '' }}>
                                                 {{ $dept->name }}
@@ -133,10 +131,10 @@
 
                             <div class="relative" id="user-dropdown">
                                 <button id="user-dropdown-btn"
-                                        class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-150">
-                                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                                        class="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-150">
+                                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                                     <span class="hidden sm:inline">{{ $user->name }}</span>
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                     </svg>
                                 </button>
@@ -161,25 +159,25 @@
                                 </div>
                             </div>
 
-                            <button id="mobile-menu-btn" class="lg:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                                <svg id="menu-icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button id="mobile-menu-btn" class="lg:hidden p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                <svg id="menu-icon-open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                                 </svg>
-                                <svg id="menu-icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                             </button>
-                            <a href="{{ route('notifications.index') }}" class="relative text-sm text-gray-600 hover:text-gray-900">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <a href="{{ route('notifications.index') }}" class="relative text-gray-600 hover:text-gray-900">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                                 @if ($unreadCount > 0)
                                     <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{{ min($unreadCount, 9) }}</span>
                                 @endif
                             </a>
                         @else
-                            <div class="flex items-center gap-2">
-                                <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">Login</a>
+                            <div class="flex items-center gap-1.5">
+                                <a href="{{ route('login') }}" class="px-2 py-1 text-xs font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">Login</a>
                                 @if (Route::has('register'))
-                                    <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">Register</a>
+                                    <a href="{{ route('register') }}" class="px-2 py-1 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">Register</a>
                                 @endif
                             </div>
                         @endauth
@@ -189,11 +187,11 @@
 
             @auth
                 <div id="mobile-menu" class="hidden lg:hidden border-t border-gray-200 bg-white">
-                    <div class="px-4 py-3 space-y-1">
+                    <div class="px-3 py-2 space-y-0.5">
                         @if ($isSuperuser)
-                            <form method="GET" action="{{ url('/' . $currentDptid . '/employees') }}" class="pb-3">
+                            <form method="GET" action="{{ url('/' . $currentDptid . '/employees') }}" class="pb-2">
                                 <select name="dpt_switch_mobile" onchange="this.form.action='/'+this.value+'/employees'; this.form.submit()"
-                                        class="w-full text-sm border border-gray-300 rounded-lg py-2 px-3 bg-white text-gray-700">
+                                        class="w-full text-xs border border-gray-300 rounded-lg py-1.5 px-2 bg-white text-gray-700">
                                     @foreach (Department::all() as $dept)
                                         <option value="{{ $dept->id }}" {{ $dept->id == $currentDptid ? 'selected' : '' }}>
                                             {{ $dept->name }}
@@ -203,8 +201,8 @@
                             </form>
                         @endif
 
-                        <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg {{ $isActive('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-100' }}">
-                            {{ svg_icon('dashboard', $isActive('dashboard') ? '#4338CA' : '#6B7280') }}
+                        <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-2 py-2 text-sm font-medium rounded-lg {{ $isActive('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-100' }}">
+                            {!! svg_icon('dashboard', $isActive('dashboard') ? '#4338CA' : '#6B7280') !!}
                             Dashboard
                         </a>
 
@@ -224,20 +222,20 @@
                                 $active = $isActive($item['route']);
                             @endphp
                             <a href="{{ $href }}"
-                               class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg {{ $active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-100' }}">
-                                <span class="shrink-0">{{ svg_icon($item['icon'], $active ? '#4338CA' : '#6B7280') }}</span>
+                               class="flex items-center gap-2 px-2 py-2 text-sm font-medium rounded-lg {{ $active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-100' }}">
+                                <span class="shrink-0">{!! svg_icon($item['icon'], $active ? '#4338CA' : '#6B7280') !!}</span>
                                 {{ $item['label'] }}
                             </a>
                         @endforeach
 
                         @if ($onPersonalPage && ($isSuperuser || $isDeptAdmin))
                             <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}"
-                               class="flex items-center gap-3 px-3 py-2.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg">
+                               class="flex items-center gap-2 px-2 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg">
                                 &larr; Admin Panel
                             </a>
                         @elseif (!$onPersonalPage && ($isSuperuser || $isDeptAdmin))
                             <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}"
-                               class="flex items-center gap-3 px-3 py-2.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg">
+                               class="flex items-center gap-2 px-2 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg">
                                 My Panel &rarr;
                             </a>
                         @endif
@@ -290,13 +288,13 @@
 @php
     function svg_icon(string $name, string $color = '#6B7280'): string {
         $icons = [
-            'dashboard' => '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
-            'employees' => '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
-            'leave' => '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>',
-            'attendance' => '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
-            'payroll' => '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',
-            'recruitment' => '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>',
-            'settings' => '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
+            'dashboard' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+            'employees' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+            'leave' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>',
+            'attendance' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+            'payroll' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',
+            'recruitment' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>',
+            'settings' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
         ];
         return $icons[$name] ?? '';
     }
