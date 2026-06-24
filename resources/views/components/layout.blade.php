@@ -7,8 +7,8 @@
     $routeDptid = request()->route('dptid');
     $currentDptid = $routeDptid ?? ($isSuperuser ? Department::value('id') : $user?->department_id);
     $routeName = request()->route()?->getName();
-    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'panel.'));
     $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my');
+    $isActive = fn ($patterns) => collect((array) $patterns)->contains(fn ($p) => str_starts_with($routeName ?? '', $p));
     $unreadCount = $user ? NotificationModel::forUser($user)->unread()->count() : 0;
 @endphp
 <!DOCTYPE html>
@@ -21,19 +21,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased">
-<<<<<<< Updated upstream
-    <div class="min-h-screen bg-gray-100">
-        <nav class="bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center space-x-8">
-                        <a href="{{ url('/') }}" class="flex items-center gap-2 shrink-0 text-xl font-bold text-gray-800">
-                            <svg class="shrink-0" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><rect x="0" y="0" width="32" height="32" rx="8" fill="#121826"/><path d="M5 9 L16 16 L5 23 Z" fill="#C8893D"/><path d="M27 9 L16 16 L27 23 Z" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/></svg>PALINDROME
-=======
     <div class="min-h-screen bg-gray-50">
         <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-xs">
             <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-                    <div class="flex items-center justify-between h-12 lg:h-14">
+                <div class="flex items-center justify-between h-12 lg:h-14">
 
                     <div class="flex items-center gap-1 sm:gap-2 lg:gap-4">
                         <a href="{{ url('/') }}" class="flex items-center gap-1 sm:gap-1.5 shrink-0">
@@ -44,45 +35,45 @@
                                 <line x1="16" y1="6" x2="16" y2="26" stroke="#C8893D" stroke-width="1" stroke-opacity="0.5"/>
                             </svg>
                             <span class="text-xs sm:text-sm lg:text-base font-bold text-gray-900 tracking-tight">PALINDROME</span>
->>>>>>> Stashed changes
                         </a>
-                        @auth
-                            <div class="hidden sm:flex items-center space-x-4">
-                                <a href="{{ route('dashboard') }}" class="text-sm text-gray-600 hover:text-gray-900">Dashboard</a>
 
-<<<<<<< Updated upstream
-                                @if ($isSuperuser || ($isDeptAdmin && $currentDptid))
-                                    @if ($onPersonalPage)
-                                        <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Panel</a>
-                                        <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Leave</a>
-                                        <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Attendance</a>
-                                        @if ($isSuperuser)
-                                            <a href="{{ route('settings.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Settings</a>
-                                        @endif
-                                        <span class="text-xs text-gray-300">|</span>
-                                        <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">← Admin</a>
-                                    @else
-                                        <a href="{{ route('employees.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Employees</a>
-                                        <a href="{{ route('leave.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Leave</a>
-                                        <a href="{{ route('attendance.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Attendance</a>
-                                        <a href="{{ route('payroll.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Payroll</a>
-                                        <a href="{{ route('recruitment.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">Recruitment</a>
-                                        @if ($isSuperuser)
-                                            <a href="{{ route('settings.index') }}" class="text-sm text-gray-600 hover:text-gray-900">Settings</a>
-                                        @endif
-                                        <span class="text-xs text-gray-300">|</span>
-                                        <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">My Panel →</a>
-                                    @endif
-                                @elseif ($currentDptid)
-                                    <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Panel</a>
-                                    <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Leave</a>
-                                    <a href="{{ route('attendance.my', ['dptid' => $currentDptid]) }}" class="text-sm text-gray-600 hover:text-gray-900">My Attendance</a>
-                                @endif
-                            </div>
-                        @endauth
-                    </div>
-                    <div class="flex items-center space-x-4">
-=======
+                        @auth
+                            <div class="hidden lg:flex items-center gap-1">
+                                @php
+                                    $navItems = [];
+                                    $allItems = [
+                                        ['route' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
+                                    ];
+                                    if ($isSuperuser || ($isDeptAdmin && $currentDptid)) {
+                                        if ($onPersonalPage) {
+                                            $allItems = array_merge($allItems, [
+                                                ['route' => 'leave.my', 'label' => 'My Leave', 'icon' => 'leave'],
+                                                ['route' => 'attendance.my', 'label' => 'My Attendance', 'icon' => 'attendance'],
+                                            ]);
+                                            if ($isSuperuser) {
+                                                $allItems[] = ['route' => 'settings.index', 'label' => 'Settings', 'icon' => 'settings'];
+                                            }
+                                        } else {
+                                            $allItems = array_merge($allItems, [
+                                                ['route' => 'employees', 'label' => 'Employees', 'icon' => 'employees'],
+                                                ['route' => 'leave', 'label' => 'Leave', 'icon' => 'leave'],
+                                                ['route' => 'attendance', 'label' => 'Attendance', 'icon' => 'attendance'],
+                                                ['route' => 'payroll', 'label' => 'Payroll', 'icon' => 'payroll'],
+                                                ['route' => 'recruitment', 'label' => 'Recruitment', 'icon' => 'recruitment'],
+                                            ]);
+                                            if ($isSuperuser) {
+                                                $allItems[] = ['route' => 'settings.index', 'label' => 'Settings', 'icon' => 'settings'];
+                                            }
+                                        }
+                                        $navItems = $allItems;
+                                    } elseif ($currentDptid) {
+                                        $navItems = array_merge($allItems, [
+                                            ['route' => 'leave.my', 'label' => 'My Leave', 'icon' => 'leave'],
+                                            ['route' => 'attendance.my', 'label' => 'My Attendance', 'icon' => 'attendance'],
+                                        ]);
+                                    }
+                                @endphp
+
                                 @foreach ($navItems as $item)
                                     @php
                                         $href = match (true) {
@@ -118,22 +109,17 @@
                                        class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
                                         My Panel &rarr;
                                     </a>
-                            @endif
+                                @endif
                             </div>
                         @endauth
                     </div>
 
                     <div class="flex items-center gap-1 sm:gap-2">
->>>>>>> Stashed changes
                         @auth
                             @if ($isSuperuser)
-                                <form method="GET" action="{{ url('/' . $currentDptid . '/employees') }}" class="flex items-center">
+                                <form method="GET" action="{{ url('/' . $currentDptid . '/employees') }}" class="hidden sm:block">
                                     <select name="dpt_switch" onchange="this.form.action='/'+this.value+'/employees'; this.form.submit()"
-<<<<<<< Updated upstream
-                                            class="text-sm border-gray-300 rounded">
-=======
                                             class="text-xs border border-gray-300 rounded-lg py-1 pl-1.5 pr-5 bg-white text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
->>>>>>> Stashed changes
                                         @foreach (Department::all() as $dept)
                                             <option value="{{ $dept->id }}" {{ $dept->id == $currentDptid ? 'selected' : '' }}>
                                                 {{ $dept->name }}
@@ -142,10 +128,6 @@
                                     </select>
                                 </form>
                             @endif
-<<<<<<< Updated upstream
-                            <a href="{{ route('notifications.index') }}" class="relative text-sm text-gray-600 hover:text-gray-900">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-=======
 
                             <div class="relative" id="user-dropdown">
                                 <button id="user-dropdown-btn"
@@ -187,36 +169,21 @@
                             </button>
                             <a href="{{ route('notifications.index') }}" class="relative text-gray-600 hover:text-gray-900">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
->>>>>>> Stashed changes
                                 @if ($unreadCount > 0)
                                     <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{{ min($unreadCount, 9) }}</span>
                                 @endif
                             </a>
-                            <a href="{{ route('profile.edit') }}" class="text-sm text-gray-600 hover:text-gray-900">{{ $user->name }}</a>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="text-sm text-gray-600 hover:text-gray-900">Logout</button>
-                            </form>
                         @else
-<<<<<<< Updated upstream
-                            <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-gray-900">Login</a>
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="text-sm text-gray-600 hover:text-gray-900">Register</a>
-                            @endif
-=======
                             <div class="flex items-center gap-1.5">
                                 <a href="{{ route('login') }}" class="px-2 py-1 text-xs font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">Login</a>
                                 @if (Route::has('register'))
                                     <a href="{{ route('register') }}" class="px-2 py-1 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">Register</a>
                                 @endif
                             </div>
->>>>>>> Stashed changes
                         @endauth
                     </div>
                 </div>
             </div>
-<<<<<<< Updated upstream
-=======
 
             @auth
                 <div id="mobile-menu" class="hidden lg:hidden border-t border-gray-200 bg-white">
@@ -275,12 +242,60 @@
                     </div>
                 </div>
             @endauth
->>>>>>> Stashed changes
         </nav>
 
         <main>
             {{ $slot }}
         </main>
     </div>
+
+    @auth
+        <script>
+            (function() {
+                const menuBtn = document.getElementById('mobile-menu-btn');
+                const menu = document.getElementById('mobile-menu');
+                const iconOpen = document.getElementById('menu-icon-open');
+                const iconClose = document.getElementById('menu-icon-close');
+                if (menuBtn && menu) {
+                    menuBtn.addEventListener('click', function() {
+                        const isOpen = !menu.classList.contains('hidden');
+                        menu.classList.toggle('hidden', isOpen);
+                        iconOpen.classList.toggle('hidden', !isOpen);
+                        iconClose.classList.toggle('hidden', isOpen);
+                    });
+                }
+
+                const dropdownBtn = document.getElementById('user-dropdown-btn');
+                const dropdownMenu = document.getElementById('user-dropdown-menu');
+                if (dropdownBtn && dropdownMenu) {
+                    dropdownBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const isOpen = !dropdownMenu.classList.contains('hidden');
+                        dropdownMenu.classList.toggle('hidden', isOpen);
+                    });
+                    document.addEventListener('click', function(e) {
+                        if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                            dropdownMenu.classList.add('hidden');
+                        }
+                    });
+                }
+            })();
+        </script>
+    @endauth
 </body>
 </html>
+
+@php
+    function svg_icon(string $name, string $color = '#6B7280'): string {
+        $icons = [
+            'dashboard' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+            'employees' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+            'leave' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>',
+            'attendance' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+            'payroll' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',
+            'recruitment' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>',
+            'settings' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
+        ];
+        return $icons[$name] ?? '';
+    }
+@endphp
