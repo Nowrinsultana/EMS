@@ -86,6 +86,11 @@ class User extends Authenticatable
         $this->save();
     }
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
     public function basicSalaries(): HasMany
     {
         return $this->hasMany(BasicSalary::class);
@@ -99,11 +104,6 @@ class User extends Authenticatable
     public function payrollAdjustments(): HasMany
     {
         return $this->hasMany(PayrollAdjustment::class);
-    }
-
-    public function documents(): HasMany
-    {
-        return $this->hasMany(Document::class);
     }
 
     /**
