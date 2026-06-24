@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CandidateApplication extends Model
 {
-    protected $fillable = ['job_vacancy_id', 'name', 'email', 'phone_number', 'cover_letter', 'resume_url', 'status'];
+    protected $fillable = ['job_vacancy_id', 'name', 'email', 'phone_number', 'cover_letter', 'resume_url', 'resume_path', 'status'];
     public function vacancy(): BelongsTo { return $this->belongsTo(JobVacancy::class, 'job_vacancy_id'); }
     public function interviews(): HasMany { return $this->hasMany(Interview::class); }
 }
