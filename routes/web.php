@@ -10,7 +10,9 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\MyAttendanceController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\PersonalPanelController;
 use App\Http\Controllers\RecruitmentController;
 use App\Http\Controllers\Settings\DepartmentController;
 use Illuminate\Support\Facades\Route;
@@ -34,13 +36,17 @@ Route::get('/jobs/{vacancy}/apply', [RecruitmentController::class, 'applicationF
 Route::post('/jobs/{vacancy}/apply', [RecruitmentController::class, 'apply'])->name('jobs.apply.store');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('/password', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::put('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::put('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 
     Route::prefix('{dptid}')->middleware('dept')->group(function () {
         Route::get('/leave/my', [MyLeaveController::class, 'index'])->name('leave.my');
@@ -52,6 +58,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/attendance/check-in', [MyAttendanceController::class, 'checkIn'])->name('attendance.check-in');
         Route::post('/attendance/check-out', [MyAttendanceController::class, 'checkOut'])->name('attendance.check-out');
         Route::get('/attendance/scan/{token}', [MyAttendanceController::class, 'scan'])->name('attendance.scan');
+        Route::get('/panel', [PersonalPanelController::class, 'index'])->name('panel.index');
+        Route::post('/panel/upload', [PersonalPanelController::class, 'upload'])->name('panel.upload');
+        Route::delete('/panel/documents/{document}', [PersonalPanelController::class, 'destroy'])->name('panel.destroy');
+        Route::get('/panel/documents/{document}/download', [PersonalPanelController::class, 'download'])->name('panel.download');
 
         Route::middleware('admin')->group(function () {
             Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
