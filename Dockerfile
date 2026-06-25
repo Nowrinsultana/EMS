@@ -12,14 +12,11 @@ RUN npm run build
 FROM php:8.5-cli-alpine
 
 RUN apk add --no-cache \
-    mysql-client \
     git \
     unzip \
     libzip-dev \
-    oniguruma-dev \
     && docker-php-ext-install \
     pdo_mysql \
-    mbstring \
     zip \
     opcache
 
