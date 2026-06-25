@@ -5,8 +5,10 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-if grep -q "^APP_KEY=$" .env || [ -z "$APP_KEY" ]; then
-    php artisan key:generate --force
+if grep -q "^APP_KEY=$" .env || [ -z "${APP_KEY:-}" ]; then
+    unset APP_KEY
+    sed -i '/^APP_KEY=/d' .env
+    php artisan key:generate
 fi
 
 if [ "$DB_CONNECTION" != "sqlite" ] && { [ "$DB_HOST" = "127.0.0.1" ] || [ "$DB_HOST" = "localhost" ] || [ -z "$DB_HOST" ]; }; then
