@@ -18,7 +18,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'EMS') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @php
+        $manifestPath = public_path('build/manifest.json');
+        if (file_exists($manifestPath)) {
+            $manifest = json_decode(file_get_contents($manifestPath), true);
+            $base = '/build/';
+            $done = [];
+            foreach ($manifest as $key => $entry) {
+                if (str_ends_with($key, '.css') && !in_array($entry['file'], $done)) {
+                    $done[] = $entry['file'];
+                    echo '<link rel="stylesheet" href="' . $base . $entry['file'] . '">';
+                }
+            }
+            $entry = $manifest['resources/js/app.js'] ?? null;
+            if ($entry) {
+                echo '<script type="module" src="' . $base . $entry['file'] . '"></script>';
+            }
+        }
+    @endphp
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-50">

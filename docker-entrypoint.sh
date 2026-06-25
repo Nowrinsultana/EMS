@@ -23,6 +23,7 @@ fi
 
 if [ -n "$RENDER_EXTERNAL_URL" ]; then
     export APP_URL="$RENDER_EXTERNAL_URL"
+    export ASSET_URL="$RENDER_EXTERNAL_URL"
     sed -i "s|^APP_URL=.*|APP_URL=$RENDER_EXTERNAL_URL|" .env
 fi
 
