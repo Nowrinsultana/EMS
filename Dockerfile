@@ -17,8 +17,7 @@ RUN apk add --no-cache \
     libzip-dev \
     && docker-php-ext-install \
     pdo_mysql \
-    zip \
-    opcache
+    zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
