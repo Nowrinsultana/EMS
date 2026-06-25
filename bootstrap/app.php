@@ -19,6 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'dept' => \App\Http\Middleware\DepartmentAccess::class,
             'superuser' => \App\Http\Middleware\SuperuserRequired::class,
         ]);
+
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
