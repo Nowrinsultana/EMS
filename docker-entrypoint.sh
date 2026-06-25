@@ -21,11 +21,20 @@ if [ "$DB_CONNECTION" = "sqlite" ]; then
     touch database/database.sqlite
 fi
 
+if [ -n "$RENDER_EXTERNAL_URL" ]; then
+    export APP_URL="$RENDER_EXTERNAL_URL"
+    sed -i "s|^APP_URL=.*|APP_URL=$RENDER_EXTERNAL_URL|" .env
+fi
+
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
 php artisan migrate --force
+
+php artisan db:seed --class=DatabaseSeeder --no-interaction
+
+php artisan storage:link --force 2>/dev/null || true
 
 PORT=${PORT:-8080}
 
