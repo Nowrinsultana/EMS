@@ -9,7 +9,10 @@ if grep -q "^APP_KEY=$" .env || [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
-DB_CONNECTION=${DB_CONNECTION:-sqlite}
+if [ "$DB_CONNECTION" = "mysql" ] && { [ "$DB_HOST" = "127.0.0.1" ] || [ "$DB_HOST" = "localhost" ]; }; then
+    DB_CONNECTION=sqlite
+    DB_HOST=
+fi
 
 if [ "$DB_CONNECTION" = "sqlite" ]; then
     touch database/database.sqlite
