@@ -7,7 +7,7 @@ fi
 
 if grep -q "^APP_KEY=$" .env || [ -z "${APP_KEY:-}" ]; then
     unset APP_KEY
-    sed -i '/^APP_KEY=/d' .env
+    sed -i 's/^APP_KEY=.*/APP_KEY=/' .env
     php artisan key:generate
 fi
 
