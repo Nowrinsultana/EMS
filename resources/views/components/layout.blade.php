@@ -85,11 +85,11 @@
                                         }
                                         $navItems = $allItems;
                                     } elseif ($currentDptid) {
-                                        $navItems = array_merge($allItems, [
+                                        $navItems = [
                                             ['route' => 'panel.index', 'label' => 'My Panel', 'icon' => 'panel'],
                                             ['route' => 'leave.my', 'label' => 'My Leave', 'icon' => 'leave'],
                                             ['route' => 'attendance.my', 'label' => 'My Attendance', 'icon' => 'attendance'],
-                                        ]);
+                                        ];
                                     }
                                 @endphp
 
@@ -123,7 +123,7 @@
                                        class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
                                         &larr; Admin Panel
                                     </a>
-                                @elseif (!$onPersonalPage && ($isSuperuser || $isDeptAdmin) && $routeName !== 'dashboard')
+                                @elseif (!$onPersonalPage && ($isSuperuser || $isDeptAdmin))
                                     <span class="mx-0.5 w-px h-4 bg-gray-200"></span>
                                     <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}"
                                        class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
@@ -221,10 +221,12 @@
                             </form>
                         @endif
 
-                        <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-2 py-2 text-sm font-medium rounded-lg {{ $isActive('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-100' }}">
-                            {!! svg_icon('dashboard', $isActive('dashboard') ? '#4338CA' : '#6B7280') !!}
-                            Dashboard
-                        </a>
+                        @if ($isSuperuser || $isDeptAdmin)
+                            <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-2 py-2 text-sm font-medium rounded-lg {{ $isActive('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-100' }}">
+                                {!! svg_icon('dashboard', $isActive('dashboard') ? '#4338CA' : '#6B7280') !!}
+                                Dashboard
+                            </a>
+                        @endif
 
                         @foreach ($navItems as $item)
                             @php
