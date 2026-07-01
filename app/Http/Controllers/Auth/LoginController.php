@@ -16,10 +16,14 @@ class LoginController extends Controller
 
     public function store(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password');
-
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => true], $request->filled('remember'))) {
             $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            if (!$user->superuser && !$user->isadmin && $user->department_id) {
+                return redirect()->intended(route('panel.index', ['dptid' => $user->department_id]));
+            }
 
             return redirect()->intended('/dashboard');
         }

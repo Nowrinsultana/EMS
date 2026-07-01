@@ -43,6 +43,10 @@ class PasswordSetupController extends Controller
 
         Auth::login($user);
 
+        if (!$user->superuser && !$user->isadmin && $user->department_id) {
+            return redirect()->route('panel.index', ['dptid' => $user->department_id]);
+        }
+
         return redirect()->route('dashboard');
     }
 }

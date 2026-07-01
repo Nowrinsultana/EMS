@@ -32,6 +32,10 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
+        if ($user->department_id) {
+            return redirect()->intended(route('panel.index', ['dptid' => $user->department_id]));
+        }
+
         return redirect()->intended('/dashboard');
     }
 }

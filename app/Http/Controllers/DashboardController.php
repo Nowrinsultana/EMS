@@ -18,7 +18,10 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         if (!$user->superuser && !$user->isadmin) {
-            return redirect()->route('panel.index', ['dptid' => $user->department_id]);
+            if ($user->department_id) {
+                return redirect()->route('panel.index', ['dptid' => $user->department_id]);
+            }
+            return redirect()->route('profile.edit');
         }
 
         $isSuperuser = $user->superuser;
