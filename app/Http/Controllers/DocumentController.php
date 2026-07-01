@@ -57,7 +57,7 @@ class DocumentController extends Controller
             'user_id' => $employee->id,
             'type' => 'document',
             'message' => $request->user()->name . ' uploaded a document: ' . $data['name'] . '.',
-            'link' => route('panel.index', ['dptid' => $dptid]),
+            'link' => route('documents.my', ['dptid' => $dptid]),
         ]);
 
         return redirect()->route('documents.index', ['dptid' => $dptid])

@@ -54,7 +54,7 @@ class PersonalPanelController extends Controller
             ->with('status', 'Document uploaded successfully.');
     }
 
-    public function destroy(Request $request, Document $document): RedirectResponse
+    public function destroy(Request $request, string $dptid, Document $document): RedirectResponse
     {
         if ($document->user_id !== $request->user()->id) {
             abort(403);
@@ -63,7 +63,7 @@ class PersonalPanelController extends Controller
         Storage::disk('public')->delete($document->path);
         $document->delete();
 
-        return redirect()->route('panel.index', ['dptid' => $request->route('dptid')])
+        return redirect()->route('panel.index', ['dptid' => $dptid])
             ->with('status', 'Document deleted successfully.');
     }
 
@@ -74,7 +74,7 @@ class PersonalPanelController extends Controller
         return view('panel.documents', compact('user'));
     }
 
-    public function download(Request $request, Document $document)
+    public function download(Request $request, string $dptid, Document $document)
     {
         if ($document->user_id !== $request->user()->id) {
             abort(403);
