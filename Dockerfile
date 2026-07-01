@@ -15,8 +15,11 @@ RUN apk add --no-cache \
     git \
     unzip \
     libzip-dev \
+    libpq-dev \
     && docker-php-ext-install \
     pdo_mysql \
+    pdo_pgsql \
+    pgsql \
     zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
