@@ -5,8 +5,11 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-# Source .env so shell sees its values
-set -a; . .env; set +a
+# Render env vars (DB_URL etc.) take priority over .env — don't source .env
+# Instead, read individual values from .env if not already set in environment
+DB_CONNECTION="${DB_CONNECTION:-$(grep '^DB_CONNECTION=' .env | head -1 | cut -d= -f2)}"
+DB_HOST="${DB_HOST:-$(grep '^DB_HOST=' .env | head -1 | cut -d= -f2)}"
+DB_URL="${DB_URL:-$(grep '^DB_URL=' .env | head -1 | cut -d= -f2)}"
 
 if grep -q "^APP_KEY=$" .env || [ -z "${APP_KEY:-}" ]; then
     unset APP_KEY
@@ -14,10 +17,9 @@ if grep -q "^APP_KEY=$" .env || [ -z "${APP_KEY:-}" ]; then
     php artisan key:generate
 fi
 
-# If DB_URL or DATABASE_URL is set (via Render env var), use pgsql
 if [ -n "$DB_URL" ] || [ -n "$DATABASE_URL" ]; then
-    sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=pgsql/' .env
     echo "Using PostgreSQL via DB_URL"
+    sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=pgsql/' .env
 elif [ "$DB_CONNECTION" = "pgsql" ] && { [ "$DB_HOST" = "127.0.0.1" ] || [ "$DB_HOST" = "localhost" ] || [ -z "$DB_HOST" ]; }; then
     echo "No external PostgreSQL — falling back to SQLite."
     sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
