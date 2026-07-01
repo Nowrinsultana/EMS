@@ -11,14 +11,8 @@ if grep -q "^APP_KEY=$" .env || [ -z "${APP_KEY:-}" ]; then
     php artisan key:generate
 fi
 
-if [ "$DB_CONNECTION" != "sqlite" ] && { [ "$DB_HOST" = "127.0.0.1" ] || [ "$DB_HOST" = "localhost" ] || [ -z "$DB_HOST" ]; }; then
-    export DB_CONNECTION=sqlite
-    sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
-    sed -i 's/^DB_HOST=.*/DB_HOST=/' .env
-fi
-
-if [ "$DB_CONNECTION" = "sqlite" ]; then
-    touch database/database.sqlite
+if [ "$DB_CONNECTION" != "pgsql" ] && { [ "$DB_HOST" = "127.0.0.1" ] || [ "$DB_HOST" = "localhost" ] || [ -z "$DB_HOST" ]; }; then
+    echo "Warning: No external DB_HOST configured. Set DB_CONNECTION and DB_URL/DATABASE_URL in .env"
 fi
 
 if [ -n "$RENDER_EXTERNAL_URL" ]; then

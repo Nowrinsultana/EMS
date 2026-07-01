@@ -1,7 +1,7 @@
 # EMS Project Summary
 
 ## Stack
-- Laravel 13, PHP 8.3, MySQL
+- Laravel 13, PHP 8.5.8 (C:\php\8.5.8), PostgreSQL (Neon)
 - Sanctum for API auth
 - Blade + Tailwind (Vite) for frontend
 
@@ -75,6 +75,17 @@
 | `admin` | `AdminRequired` | `isadmin` or `superuser` check |
 | `dept` | `DepartmentAccess` | Superuser OR matching `department_id` |
 | `superuser` | `SuperuserRequired` | Only superuser |
+
+## Database
+- PostgreSQL (Neon) — `DB_CONNECTION=pgsql` in `.env`
+- Custom grammar `App\Database\PostgresGrammarNoTransactions` disables schema transactions (required for Neon DDL compatibility)
+- Registered in `AppServiceProvider::boot()`
+- All migrations use Schema Builder (no raw SQL), fully cross-database compatible
+
+## PHP
+- Herd Lite at `C:\Users\nowri\.config\herd-lite\bin\php.exe` (no pdo_pgsql)
+- Full PHP 8.5.8 NTS at `C:\php\8.5.8\php.exe` (has pdo_pgsql + pgsql)
+- Must use `C:\php\8.5.8\php.exe` for artisan commands (or prepend to PATH)
 
 ## Conventions
 - Validation in FormRequest classes
