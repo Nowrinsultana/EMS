@@ -74,6 +74,7 @@
                                         } else {
                                             $allItems = array_merge($allItems, [
                                                 ['route' => 'employees', 'label' => 'Employees', 'icon' => 'employees'],
+                                                ['route' => 'documents', 'label' => 'Documents', 'icon' => 'documents'],
                                                 ['route' => 'leave', 'label' => 'Leave', 'icon' => 'leave'],
                                                 ['route' => 'attendance', 'label' => 'Attendance', 'icon' => 'attendance'],
                                                 ['route' => 'payroll', 'label' => 'Payroll', 'icon' => 'payroll'],
@@ -99,6 +100,7 @@
                                             $item['route'] === 'dashboard' => route('dashboard'),
                                             $item['route'] === 'settings.index' => route('settings.index'),
                                             $item['route'] === 'employees' => route('employees.index', ['dptid' => $currentDptid]),
+                                            $item['route'] === 'documents' => route('documents.index', ['dptid' => $currentDptid]),
                                             $item['route'] === 'leave' => route('leave.index', ['dptid' => $currentDptid]),
                                             $item['route'] === 'attendance' => route('attendance.index', ['dptid' => $currentDptid]),
                                             $item['route'] === 'payroll' => route('payroll.index', ['dptid' => $currentDptid]),
@@ -233,6 +235,7 @@
                                 $href = match (true) {
                                     $item['route'] === 'settings.index' => route('settings.index'),
                                     $item['route'] === 'employees' => route('employees.index', ['dptid' => $currentDptid]),
+                                    $item['route'] === 'documents' => route('documents.index', ['dptid' => $currentDptid]),
                                     $item['route'] === 'leave' => route('leave.index', ['dptid' => $currentDptid]),
                                     $item['route'] === 'attendance' => route('attendance.index', ['dptid' => $currentDptid]),
                                     $item['route'] === 'payroll' => route('payroll.index', ['dptid' => $currentDptid]),
@@ -311,6 +314,7 @@
 @php
     function svg_icon(string $name, string $color = '#6B7280'): string {
         $icons = [
+            'documents' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
             'panel' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
             'dashboard' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
             'employees' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',

@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Document;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 
@@ -137,57 +135,6 @@ class EmployeeController extends Controller
     {
         abort_if((int) $employee->department_id !== (int) $dptid, 404);
 
-        $documents = $employee->documents()->latest()->get();
-
-        return view('employees.show', compact('employee', 'dptid', 'documents'));
-    }
-
-    public function uploadDocument(Request $request, $dptid, User $employee): RedirectResponse
-    {
-        abort_if((int) $employee->department_id !== (int) $dptid, 404);
-
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'file' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
-        ]);
-
-        $path = $request->file('file')->store('documents/' . $employee->id, 'public');
-
-        $employee->documents()->create([
-            'name' => $data['name'],
-            'original_name' => $request->file('file')->getClientOriginalName(),
-            'path' => $path,
-            'mime_type' => $request->file('file')->getMimeType(),
-            'size' => $request->file('file')->getSize(),
-        ]);
-
-        Notification::create([
-            'user_id' => $employee->id,
-            'type' => 'document',
-            'message' => $request->user()->name . ' uploaded a document: ' . $data['name'] . '.',
-        ]);
-
-        return redirect()->route('employees.show', ['dptid' => $dptid, 'employee' => $employee])
-            ->with('status', 'Document uploaded successfully.');
-    }
-
-    public function downloadDocument(Request $request, $dptid, User $employee, Document $document)
-    {
-        abort_if((int) $employee->department_id !== (int) $dptid, 404);
-        abort_if((int) $document->user_id !== (int) $employee->id, 404);
-
-        return Storage::disk('public')->download($document->path, $document->original_name);
-    }
-
-    public function destroyDocument(Request $request, $dptid, User $employee, Document $document): RedirectResponse
-    {
-        abort_if((int) $employee->department_id !== (int) $dptid, 404);
-        abort_if((int) $document->user_id !== (int) $employee->id, 404);
-
-        Storage::disk('public')->delete($document->path);
-        $document->delete();
-
-        return redirect()->route('employees.show', ['dptid' => $dptid, 'employee' => $employee])
-            ->with('status', 'Document deleted successfully.');
+        return view('employees.show', compact('employee', 'dptid'));
     }
 }
