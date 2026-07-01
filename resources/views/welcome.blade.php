@@ -580,7 +580,7 @@
     </nav>
     <div class="nav-cta">
       <a href="{{ route('login') }}" class="signin">Sign in</a>
-      <a href="{{ route('register') }}" class="btn btn-primary">Start free trial</a>
+      <a href="{{ route('register') }}" class="btn btn-primary">Get started</a>
     </div>
   </div>
 </header>
@@ -593,7 +593,7 @@
         <h1 class="hero-title">Manage your workforce<br>with <em>PALINDROME.</em></h1>
         <p class="hero-sub">Departments, employees, attendance, leave, and payroll — all in one place. Built for teams who need structure without the complexity.</p>
         <div class="hero-actions">
-          <a href="{{ route('register') }}" class="btn btn-primary btn-lg">Start free trial</a>
+          <a href="{{ route('register') }}" class="btn btn-primary btn-lg">Get started</a>
           <a href="{{ route('jobs.list') }}" class="btn btn-ghost btn-lg">View open positions</a>
         </div>
         <div class="avatars">
@@ -783,10 +783,10 @@
       <div class="cta-banner">
         <div>
           <h2>Take control of your workforce today.</h2>
-          <p>Free for 30 days. No credit card, no commitment.</p>
+          <p>Departments, attendance, leave, and payroll — all in one place.</p>
         </div>
         <div class="actions">
-          <a href="{{ route('register') }}" class="btn btn-lg btn-on-dark">Start free trial</a>
+          <a href="{{ route('register') }}" class="btn btn-lg btn-on-dark">Get started</a>
           <a href="{{ route('jobs.list') }}" class="btn btn-lg btn-ghost-dark">View open positions</a>
         </div>
       </div>
