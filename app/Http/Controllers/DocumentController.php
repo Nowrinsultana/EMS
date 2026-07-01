@@ -72,6 +72,10 @@ class DocumentController extends Controller
             abort(404);
         }
 
+        if (!Storage::disk('public')->exists($document->path)) {
+            return back()->with('error', 'File not found. It may have been lost after a server redeploy.');
+        }
+
         return Storage::disk('public')->download($document->path, $document->original_name);
     }
 
