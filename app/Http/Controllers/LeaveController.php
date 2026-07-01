@@ -72,6 +72,7 @@ class LeaveController extends Controller
                 'user_id' => $leave->staff_id,
                 'type' => 'leave',
                 'message' => "Your leave request from {$newStartDate} to {$newEndDate} has been updated to " . $newStatus . ".",
+                'link' => route('leave.my', ['dptid' => $dptid]),
             ]);
         }
 
@@ -98,6 +99,7 @@ class LeaveController extends Controller
                 'user_id' => $leave->staff_id,
                 'type' => 'leave',
                 'message' => 'Your leave request from ' . $leave->start_date->format('Y-m-d') . ' to ' . $leave->end_date->format('Y-m-d') . ' has been approved.',
+                'link' => route('leave.my', ['dptid' => $dptid]),
             ]);
         }
 
@@ -125,6 +127,7 @@ class LeaveController extends Controller
             'user_id' => $leave->staff_id,
             'type' => 'leave',
             'message' => 'Your leave request from ' . $leave->start_date->format('Y-m-d') . ' to ' . $leave->end_date->format('Y-m-d') . ' has been declined.',
+            'link' => route('leave.my', ['dptid' => $dptid]),
         ]);
 
         return back()->with('status', 'Leave declined.');

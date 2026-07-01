@@ -47,6 +47,25 @@
                 </div>
             @endif
 
+            @if ($checkInUrl || $checkOutUrl)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    @if ($checkInUrl && (!$todayRecord || !$todayRecord->check_in))
+                        <div class="bg-white border-2 border-gray-200 rounded-lg p-4 flex flex-col items-center">
+                            <h3 class="text-sm font-medium text-gray-700 mb-3">Scan to Check In</h3>
+                            <div id="qr-checkin" class="w-48 h-48"></div>
+                            <p class="text-xs text-gray-400 mt-3">Open your phone camera and scan the QR code</p>
+                        </div>
+                    @endif
+                    @if ($checkOutUrl && $todayRecord && $todayRecord->check_in && !$todayRecord->check_out)
+                        <div class="bg-white border-2 border-gray-200 rounded-lg p-4 flex flex-col items-center">
+                            <h3 class="text-sm font-medium text-gray-700 mb-3">Scan to Check Out</h3>
+                            <div id="qr-checkout" class="w-48 h-48"></div>
+                            <p class="text-xs text-gray-400 mt-3">Open your phone camera and scan the QR code</p>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="bg-gray-50 border-b">
@@ -92,4 +111,24 @@
             </div>
         </div>
     </div>
+
+    @if ($checkInUrl || $checkOutUrl)
+        <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+        <script>
+            @if ($checkInUrl && (!$todayRecord || !$todayRecord->check_in))
+                new QRCode(document.getElementById('qr-checkin'), {
+                    text: '{{ $checkInUrl }}',
+                    width: 192,
+                    height: 192,
+                });
+            @endif
+            @if ($checkOutUrl && $todayRecord && $todayRecord->check_in && !$todayRecord->check_out)
+                new QRCode(document.getElementById('qr-checkout'), {
+                    text: '{{ $checkOutUrl }}',
+                    width: 192,
+                    height: 192,
+                });
+            @endif
+        </script>
+    @endif
 </x-layout>

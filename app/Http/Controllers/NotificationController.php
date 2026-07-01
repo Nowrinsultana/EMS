@@ -18,6 +18,21 @@ class NotificationController extends Controller
         return view('notifications.index', compact('notifications'));
     }
 
+    public function go(Request $request, Notification $notification): RedirectResponse
+    {
+        if ($notification->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        if (!$notification->is_read) {
+            $notification->update(['is_read' => true]);
+        }
+
+        return $notification->link
+            ? redirect($notification->link)
+            : back();
+    }
+
     public function markAsRead(Request $request, Notification $notification): RedirectResponse
     {
         if ($notification->user_id !== $request->user()->id) {

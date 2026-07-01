@@ -57,6 +57,7 @@ class EmployeeController extends Controller
             'user_id' => $user->id,
             'type' => 'system',
             'message' => 'Welcome to PALINDROME EMS! Your account has been created. Please set your password.',
+            'link' => route('panel.index', ['dptid' => $dptid]),
         ]);
 
         $token = Str::random(60);
@@ -98,6 +99,7 @@ class EmployeeController extends Controller
             'user_id' => $employee->id,
             'type' => 'profile',
             'message' => 'Your profile has been updated by ' . $request->user()->name . '.',
+            'link' => route('panel.index', ['dptid' => $dptid]),
         ]);
 
         return redirect()->route('employees.index', ['dptid' => $dptid])
@@ -124,6 +126,7 @@ class EmployeeController extends Controller
                 'user_id' => $admin->id,
                 'type' => 'system',
                 'message' => "{$employee->name} has been removed from the department.",
+                'link' => route('employees.index', ['dptid' => $dptid]),
             ]);
         }
 

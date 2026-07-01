@@ -46,6 +46,7 @@ class PersonalPanelController extends Controller
                 'user_id' => $admin->id,
                 'type' => 'document',
                 'message' => "{$user->name} uploaded a document: {$name}.",
+                'link' => route('documents.index', ['dptid' => $user->department_id]),
             ]);
         }
 

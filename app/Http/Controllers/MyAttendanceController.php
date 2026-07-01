@@ -20,7 +20,19 @@ class MyAttendanceController extends Controller
         $today = now()->format('Y-m-d');
         $todayRecord = $attendances->firstWhere('date', $today);
 
-        return view('attendance.my', compact('attendances', 'todayRecord'));
+        $dptid = $request->route('dptid');
+        $checkInUrl = null;
+        $checkOutUrl = null;
+
+        $qr = DailyQrCode::where('date', $today)->first();
+        if ($qr && $qr->is_active) {
+            $checkInUrl = route('attendance.scan', ['dptid' => $dptid, 'token' => $qr->check_in_token]);
+            if ($qr->check_out_token) {
+                $checkOutUrl = route('attendance.scan', ['dptid' => $dptid, 'token' => $qr->check_out_token]);
+            }
+        }
+
+        return view('attendance.my', compact('attendances', 'todayRecord', 'checkInUrl', 'checkOutUrl'));
     }
 
     public function checkIn(Request $request): RedirectResponse

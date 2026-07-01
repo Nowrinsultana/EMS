@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Notification extends Model
 {
     protected $fillable = [
-        'user_id', 'type', 'message', 'is_read',
+        'user_id', 'type', 'message', 'link', 'is_read',
     ];
 
     protected function casts(): array

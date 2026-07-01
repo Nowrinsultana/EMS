@@ -50,13 +50,15 @@ class MyLeaveController extends Controller
             'status' => 'pending',
         ]);
 
+        $dptid = $request->route('dptid');
+
         Notification::create([
             'user_id' => $user->id,
             'type' => 'leave',
             'message' => "Your leave request from {$data['start_date']} to {$data['end_date']} has been submitted.",
+            'link' => route('leave.my', ['dptid' => $dptid]),
         ]);
 
-        $dptid = $request->route('dptid');
         $admins = User::where('department_id', $dptid)
             ->where(fn ($q) => $q->where('isadmin', true)->orWhere('superuser', true))
             ->where('id', '!=', $user->id)
@@ -66,6 +68,7 @@ class MyLeaveController extends Controller
                 'user_id' => $admin->id,
                 'type' => 'leave',
                 'message' => "{$user->name} submitted a leave request from {$data['start_date']} to {$data['end_date']}.",
+                'link' => route('leave.index', ['dptid' => $dptid]),
             ]);
         }
 

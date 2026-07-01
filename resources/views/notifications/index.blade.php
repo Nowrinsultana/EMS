@@ -18,7 +18,10 @@
 
             <div class="space-y-3">
                 @forelse ($notifications as $notification)
-                    <div class="flex items-start justify-between p-4 border rounded-lg {{ $notification->is_read ? 'bg-gray-50' : 'bg-indigo-50 border-indigo-200' }}">
+                    <div class="relative flex items-start justify-between p-4 border rounded-lg {{ $notification->is_read ? 'bg-gray-50' : 'bg-indigo-50 border-indigo-200' }}">
+                        @if ($notification->link)
+                            <a href="{{ route('notifications.go', $notification) }}" class="absolute inset-0 rounded-lg"></a>
+                        @endif
                         <div class="flex-1">
                             @if ($notification->type)
                                 <span class="text-xs font-medium text-gray-500 uppercase">{{ $notification->type }}</span>
@@ -29,7 +32,7 @@
                             <p class="text-xs text-gray-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
                         </div>
                         @unless ($notification->is_read)
-                            <form method="POST" action="{{ route('notifications.read', $notification) }}">
+                            <form method="POST" action="{{ route('notifications.read', $notification) }}" class="relative z-10">
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-900 ml-4 shrink-0">Mark read</button>
