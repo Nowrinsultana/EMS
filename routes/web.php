@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
             Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
             Route::post('/employees/{employee}/documents', [EmployeeController::class, 'uploadDocument'])->name('employees.documents.upload');
+            Route::get('/employees/{employee}/documents/{document}/download', [EmployeeController::class, 'downloadDocument'])->name('employees.documents.download');
             Route::delete('/employees/{employee}/documents/{document}', [EmployeeController::class, 'destroyDocument'])->name('employees.documents.destroy');
             Route::get('/leave', [LeaveController::class, 'index'])->name('leave.index');
             Route::get('/leave/{leave}/edit', [LeaveController::class, 'edit'])->name('leave.edit');

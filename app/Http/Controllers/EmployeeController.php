@@ -171,6 +171,14 @@ class EmployeeController extends Controller
             ->with('status', 'Document uploaded successfully.');
     }
 
+    public function downloadDocument(Request $request, $dptid, User $employee, Document $document)
+    {
+        abort_if((int) $employee->department_id !== (int) $dptid, 404);
+        abort_if((int) $document->user_id !== (int) $employee->id, 404);
+
+        return Storage::disk('public')->download($document->path, $document->original_name);
+    }
+
     public function destroyDocument(Request $request, $dptid, User $employee, Document $document): RedirectResponse
     {
         abort_if((int) $employee->department_id !== (int) $dptid, 404);
