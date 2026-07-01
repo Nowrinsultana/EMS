@@ -23,8 +23,15 @@ class MyAttendanceController extends Controller
         $dptid = $request->route('dptid');
         $checkInUrl = null;
 
-        $qr = DailyQrCode::where('date', $today)->first();
-        if ($qr && $qr->is_active) {
+        $qr = DailyQrCode::firstOrCreate(
+            ['date' => $today],
+            [
+                'check_in_token' => bin2hex(random_bytes(32)),
+                'is_active' => true,
+            ],
+        );
+
+        if ($qr->is_active) {
             $checkInUrl = route('attendance.scan', ['dptid' => $dptid, 'token' => $qr->check_in_token]);
         }
 
