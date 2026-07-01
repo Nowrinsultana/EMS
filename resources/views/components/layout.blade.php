@@ -73,7 +73,6 @@
                                             }
                                         } else {
                                             $allItems = array_merge($allItems, [
-                                                ['route' => 'panel.index', 'label' => 'My Panel', 'icon' => 'panel'],
                                                 ['route' => 'employees', 'label' => 'Employees', 'icon' => 'employees'],
                                                 ['route' => 'leave', 'label' => 'Leave', 'icon' => 'leave'],
                                                 ['route' => 'attendance', 'label' => 'Attendance', 'icon' => 'attendance'],
