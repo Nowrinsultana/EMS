@@ -7,7 +7,7 @@
     $routeDptid = request()->route('dptid');
     $currentDptid = $routeDptid ?? ($isSuperuser ? Department::value('id') : $user?->department_id);
     $routeName = request()->route()?->getName();
-    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'panel.'));
+    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'panel.') || $routeName === 'documents.my');
     $isActive = fn ($patterns) => collect((array) $patterns)->contains(fn ($p) => str_starts_with($routeName ?? '', $p));
     $unreadCount = $user ? NotificationModel::forUser($user)->unread()->count() : 0;
     $recentNotifications = $user ? NotificationModel::forUser($user)->latest()->take(5)->get() : collect();
@@ -63,16 +63,17 @@
                                         ['route' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard'],
                                     ];
                                     if ($isSuperuser || ($isDeptAdmin && $currentDptid)) {
-                                        if ($onPersonalPage) {
-                                            $allItems = array_merge($allItems, [
-                                                ['route' => 'panel.index', 'label' => 'My Panel', 'icon' => 'panel'],
-                                                ['route' => 'leave.my', 'label' => 'My Leave', 'icon' => 'leave'],
-                                                ['route' => 'attendance.my', 'label' => 'My Attendance', 'icon' => 'attendance'],
-                                            ]);
-                                            if ($isSuperuser) {
-                                                $allItems[] = ['route' => 'settings.index', 'label' => 'Settings', 'icon' => 'settings'];
-                                            }
-                                        } else {
+                                    if ($onPersonalPage) {
+                                        $allItems = array_merge($allItems, [
+                                            ['route' => 'panel.index', 'label' => 'My Panel', 'icon' => 'panel'],
+                                            ['route' => 'documents.my', 'label' => 'My Documents', 'icon' => 'documents'],
+                                            ['route' => 'leave.my', 'label' => 'My Leave', 'icon' => 'leave'],
+                                            ['route' => 'attendance.my', 'label' => 'My Attendance', 'icon' => 'attendance'],
+                                        ]);
+                                        if ($isSuperuser) {
+                                            $allItems[] = ['route' => 'settings.index', 'label' => 'Settings', 'icon' => 'settings'];
+                                        }
+                                    } else {
                                             $allItems = array_merge($allItems, [
                                                 ['route' => 'employees', 'label' => 'Employees', 'icon' => 'employees'],
                                                 ['route' => 'documents', 'label' => 'Documents', 'icon' => 'documents'],
@@ -89,6 +90,7 @@
                                     } elseif ($currentDptid) {
                                         $navItems = [
                                             ['route' => 'panel.index', 'label' => 'My Panel', 'icon' => 'panel'],
+                                            ['route' => 'documents.my', 'label' => 'My Documents', 'icon' => 'documents'],
                                             ['route' => 'leave.my', 'label' => 'My Leave', 'icon' => 'leave'],
                                             ['route' => 'attendance.my', 'label' => 'My Attendance', 'icon' => 'attendance'],
                                         ];
@@ -107,6 +109,7 @@
                                             $item['route'] === 'payroll' => route('payroll.index', ['dptid' => $currentDptid]),
                                             $item['route'] === 'recruitment' => route('recruitment.index', ['dptid' => $currentDptid]),
                                             $item['route'] === 'panel.index' => route('panel.index', ['dptid' => $currentDptid]),
+                                            $item['route'] === 'documents.my' => route('documents.my', ['dptid' => $currentDptid]),
                                             $item['route'] === 'leave.my' => route('leave.my', ['dptid' => $currentDptid]),
                                             $item['route'] === 'attendance.my' => route('attendance.my', ['dptid' => $currentDptid]),
                                             default => '#',
@@ -281,6 +284,7 @@
                                     $item['route'] === 'payroll' => route('payroll.index', ['dptid' => $currentDptid]),
                                     $item['route'] === 'recruitment' => route('recruitment.index', ['dptid' => $currentDptid]),
                                     $item['route'] === 'panel.index' => route('panel.index', ['dptid' => $currentDptid]),
+                                    $item['route'] === 'documents.my' => route('documents.my', ['dptid' => $currentDptid]),
                                     $item['route'] === 'leave.my' => route('leave.my', ['dptid' => $currentDptid]),
                                     $item['route'] === 'attendance.my' => route('attendance.my', ['dptid' => $currentDptid]),
                                     default => '#',

@@ -67,6 +67,13 @@ class PersonalPanelController extends Controller
             ->with('status', 'Document deleted successfully.');
     }
 
+    public function myDocuments(Request $request): View
+    {
+        $user = $request->user()->load('documents');
+
+        return view('panel.documents', compact('user'));
+    }
+
     public function download(Request $request, Document $document)
     {
         if ($document->user_id !== $request->user()->id) {

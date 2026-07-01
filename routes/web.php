@@ -60,10 +60,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/attendance/check-in', [MyAttendanceController::class, 'checkIn'])->name('attendance.check-in');
         Route::post('/attendance/check-out', [MyAttendanceController::class, 'checkOut'])->name('attendance.check-out');
         Route::get('/attendance/scan/{token}', [MyAttendanceController::class, 'scan'])->name('attendance.scan');
-        Route::get('/panel', [PersonalPanelController::class, 'index'])->name('panel.index');
-        Route::post('/panel/upload', [PersonalPanelController::class, 'upload'])->name('panel.upload');
-        Route::delete('/panel/documents/{document}', [PersonalPanelController::class, 'destroy'])->name('panel.destroy');
-        Route::get('/panel/documents/{document}/download', [PersonalPanelController::class, 'download'])->name('panel.download');
+            Route::get('/panel', [PersonalPanelController::class, 'index'])->name('panel.index');
+            Route::get('/documents/my', [PersonalPanelController::class, 'myDocuments'])->name('documents.my');
+            Route::post('/panel/upload', [PersonalPanelController::class, 'upload'])->name('panel.upload');
+            Route::delete('/panel/documents/{document}', [PersonalPanelController::class, 'destroy'])->name('panel.destroy');
+            Route::get('/panel/documents/{document}/download', [PersonalPanelController::class, 'download'])->name('panel.download');
 
         Route::middleware('admin')->group(function () {
             Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
