@@ -59,20 +59,12 @@
 
             <form id="upload-form" method="POST" action="{{ route('employees.documents.upload', ['dptid' => $dptid, 'employee' => $employee]) }}" enctype="multipart/form-data" class="hidden mb-6 p-4 bg-gray-50 rounded border">
                 @csrf
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label for="name" class="block text-sm font-medium text-gray-700">Document Name *</label>
                         <input id="name" type="text" name="name" value="{{ old('name') }}" required
                                class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                         @error('name')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
-                        <input id="type" type="text" name="type" value="{{ old('type') }}" placeholder="e.g. Contract, ID"
-                               class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                        @error('type')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>

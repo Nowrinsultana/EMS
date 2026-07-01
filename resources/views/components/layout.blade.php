@@ -7,7 +7,7 @@
     $routeDptid = request()->route('dptid');
     $currentDptid = $routeDptid ?? ($isSuperuser ? Department::value('id') : $user?->department_id);
     $routeName = request()->route()?->getName();
-    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my');
+    $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'panel.'));
     $isActive = fn ($patterns) => collect((array) $patterns)->contains(fn ($p) => str_starts_with($routeName ?? '', $p));
     $unreadCount = $user ? NotificationModel::forUser($user)->unread()->count() : 0;
 @endphp
@@ -64,6 +64,7 @@
                                     if ($isSuperuser || ($isDeptAdmin && $currentDptid)) {
                                         if ($onPersonalPage) {
                                             $allItems = array_merge($allItems, [
+                                                ['route' => 'panel.index', 'label' => 'My Panel', 'icon' => 'panel'],
                                                 ['route' => 'leave.my', 'label' => 'My Leave', 'icon' => 'leave'],
                                                 ['route' => 'attendance.my', 'label' => 'My Attendance', 'icon' => 'attendance'],
                                             ]);
@@ -85,6 +86,7 @@
                                         $navItems = $allItems;
                                     } elseif ($currentDptid) {
                                         $navItems = array_merge($allItems, [
+                                            ['route' => 'panel.index', 'label' => 'My Panel', 'icon' => 'panel'],
                                             ['route' => 'leave.my', 'label' => 'My Leave', 'icon' => 'leave'],
                                             ['route' => 'attendance.my', 'label' => 'My Attendance', 'icon' => 'attendance'],
                                         ]);
@@ -101,6 +103,7 @@
                                             $item['route'] === 'attendance' => route('attendance.index', ['dptid' => $currentDptid]),
                                             $item['route'] === 'payroll' => route('payroll.index', ['dptid' => $currentDptid]),
                                             $item['route'] === 'recruitment' => route('recruitment.index', ['dptid' => $currentDptid]),
+                                            $item['route'] === 'panel.index' => route('panel.index', ['dptid' => $currentDptid]),
                                             $item['route'] === 'leave.my' => route('leave.my', ['dptid' => $currentDptid]),
                                             $item['route'] === 'attendance.my' => route('attendance.my', ['dptid' => $currentDptid]),
                                             default => '#',
@@ -232,6 +235,7 @@
                                     $item['route'] === 'attendance' => route('attendance.index', ['dptid' => $currentDptid]),
                                     $item['route'] === 'payroll' => route('payroll.index', ['dptid' => $currentDptid]),
                                     $item['route'] === 'recruitment' => route('recruitment.index', ['dptid' => $currentDptid]),
+                                    $item['route'] === 'panel.index' => route('panel.index', ['dptid' => $currentDptid]),
                                     $item['route'] === 'leave.my' => route('leave.my', ['dptid' => $currentDptid]),
                                     $item['route'] === 'attendance.my' => route('attendance.my', ['dptid' => $currentDptid]),
                                     default => '#',
@@ -305,6 +309,7 @@
 @php
     function svg_icon(string $name, string $color = '#6B7280'): string {
         $icons = [
+            'panel' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
             'dashboard' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
             'employees' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
             'leave' => '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="'.$color.'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>',

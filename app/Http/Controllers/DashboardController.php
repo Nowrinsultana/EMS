@@ -16,11 +16,15 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+        if (!$user->superuser && !$user->isadmin) {
+            return redirect()->route('panel.index', ['dptid' => $user->department_id]);
+        }
+
         $isSuperuser = $user->superuser;
         $isDeptAdmin = $user->isadmin;
         $departmentId = $user->department_id;
 
-        // Employees
         $totalEmployees = $isSuperuser
             ? User::count()
             : User::where('department_id', $departmentId)->count();
@@ -29,14 +33,12 @@ class DashboardController extends Controller
             ? User::where('status', true)->count()
             : User::where('department_id', $departmentId)->where('status', true)->count();
 
-        // Leave
         $pendingLeaves = $isSuperuser
             ? Leave::where('status', 'pending')->count()
             : Leave::where('department_id', $departmentId)->where('status', 'pending')->count();
 
         $myPendingLeaves = Leave::where('staff_id', $user->id)->where('status', 'pending')->count();
 
-        // Attendance today
         $today = now()->format('Y-m-d');
         $myAttendance = Attendance::where('user_id', $user->id)->where('date', $today)->first();
 
@@ -44,7 +46,6 @@ class DashboardController extends Controller
             ? Attendance::where('date', $today)->whereNotNull('check_in')->count()
             : Attendance::where('department_id', $departmentId)->where('date', $today)->whereNotNull('check_in')->count();
 
-        // Payroll
         $latestPayroll = Payroll::where('user_id', $user->id)->latest('payroll_month')->first();
 
         $totalPayrolls = $isSuperuser || $isDeptAdmin
@@ -53,7 +54,6 @@ class DashboardController extends Controller
                 : Payroll::where('department_id', $departmentId)->count())
             : null;
 
-        // Recruitment
         $activeVacancies = $isSuperuser
             ? JobVacancy::where('status', 'open')->count()
             : JobVacancy::where('department_id', $departmentId)->where('status', 'open')->count();
@@ -62,7 +62,6 @@ class DashboardController extends Controller
             ? CandidateApplication::count()
             : CandidateApplication::whereHas('vacancy', fn ($q) => $q->where('department_id', $departmentId))->count();
 
-        // Settings (superuser only)
         $totalDepartments = Department::count();
 
         return view('dashboard', [
