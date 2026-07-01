@@ -10,6 +10,7 @@
     $onPersonalPage = $routeName && (str_starts_with($routeName, 'leave.my') || $routeName === 'attendance.my' || str_starts_with($routeName, 'panel.'));
     $isActive = fn ($patterns) => collect((array) $patterns)->contains(fn ($p) => str_starts_with($routeName ?? '', $p));
     $unreadCount = $user ? NotificationModel::forUser($user)->unread()->count() : 0;
+    $recentNotifications = $user ? NotificationModel::forUser($user)->latest()->take(5)->get() : collect();
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -189,12 +190,51 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                             </button>
-                            <a href="{{ route('notifications.index') }}" class="relative text-gray-600 hover:text-gray-900">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                                @if ($unreadCount > 0)
-                                    <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{{ min($unreadCount, 9) }}</span>
-                                @endif
-                            </a>
+                            <div class="relative" id="notif-dropdown">
+                                <button id="notif-dropdown-btn"
+                                        class="relative text-gray-600 hover:text-gray-900 p-1 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                    @if ($unreadCount > 0)
+                                        <span class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{{ min($unreadCount, 9) }}</span>
+                                    @endif
+                                </button>
+                                <div id="notif-dropdown-menu"
+                                     class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50 max-h-96 overflow-y-auto">
+                                    <div class="px-4 py-2 border-b border-gray-100 flex items-center justify-between">
+                                        <span class="text-xs font-semibold text-gray-700">Notifications</span>
+                                        @if ($unreadCount > 0)
+                                            <form method="POST" action="{{ route('notifications.read-all') }}">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-900">Mark all read</button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                    @forelse ($recentNotifications as $notif)
+                                        <a href="{{ route('notifications.go', $notif) }}"
+                                           class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors {{ $notif->is_read ? '' : 'bg-indigo-50/50' }}">
+                                            <div class="min-w-0 flex-1">
+                                                @if ($notif->type)
+                                                    <span class="text-xs font-medium text-gray-500 uppercase">{{ $notif->type }}</span>
+                                                @endif
+                                                <p class="text-sm {{ $notif->is_read ? 'text-gray-600' : 'text-gray-900 font-medium' }} truncate">
+                                                    {{ $notif->message }}
+                                                </p>
+                                                <p class="text-xs text-gray-400 mt-0.5">{{ $notif->created_at->diffForHumans() }}</p>
+                                            </div>
+                                            @unless ($notif->is_read)
+                                                <span class="w-2 h-2 mt-1.5 rounded-full bg-indigo-500 shrink-0"></span>
+                                            @endunless
+                                        </a>
+                                    @empty
+                                        <p class="text-center text-gray-500 py-6 text-sm">No notifications yet.</p>
+                                    @endforelse
+                                    <a href="{{ route('notifications.index') }}"
+                                       class="block text-center text-xs text-indigo-600 hover:text-indigo-900 py-2 border-t border-gray-100 font-medium">
+                                        View all notifications
+                                    </a>
+                                </div>
+                            </div>
                         @else
                             <div class="flex items-center gap-1.5">
                                 <a href="{{ route('login') }}" class="px-2 py-1 text-xs font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">Login</a>
@@ -302,6 +342,20 @@
                     document.addEventListener('click', function(e) {
                         if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
                             dropdownMenu.classList.add('hidden');
+                        }
+                    });
+                }
+
+                const notifBtn = document.getElementById('notif-dropdown-btn');
+                const notifMenu = document.getElementById('notif-dropdown-menu');
+                if (notifBtn && notifMenu) {
+                    notifBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        notifMenu.classList.toggle('hidden');
+                    });
+                    document.addEventListener('click', function(e) {
+                        if (!notifBtn.contains(e.target) && !notifMenu.contains(e.target)) {
+                            notifMenu.classList.add('hidden');
                         }
                     });
                 }
