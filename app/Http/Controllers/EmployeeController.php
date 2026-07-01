@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -54,6 +55,12 @@ class EmployeeController extends Controller
 
         $user = User::create($data);
 
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'system',
+            'message' => 'Welcome to PALINDROME EMS! Your account has been created. Please set your password.',
+        ]);
+
         $token = Str::random(60);
         $user->update(['setup_token' => $token]);
 
@@ -89,6 +96,12 @@ class EmployeeController extends Controller
 
         $employee->update($data);
 
+        Notification::create([
+            'user_id' => $employee->id,
+            'type' => 'profile',
+            'message' => 'Your profile has been updated by ' . $request->user()->name . '.',
+        ]);
+
         return redirect()->route('employees.index', ['dptid' => $dptid])
             ->with('status', 'Employee updated successfully.');
     }
@@ -103,6 +116,18 @@ class EmployeeController extends Controller
         }
 
         $employee->delete();
+
+        $admins = User::where('department_id', $dptid)
+            ->where(fn ($q) => $q->where('isadmin', true)->orWhere('superuser', true))
+            ->where('id', '!=', $request->user()->id)
+            ->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'type' => 'system',
+                'message' => "{$employee->name} has been removed from the department.",
+            ]);
+        }
 
         return redirect()->route('employees.index', ['dptid' => $dptid])
             ->with('status', 'Employee deleted successfully.');
@@ -134,6 +159,12 @@ class EmployeeController extends Controller
             'path' => $path,
             'mime_type' => $request->file('file')->getMimeType(),
             'size' => $request->file('file')->getSize(),
+        ]);
+
+        Notification::create([
+            'user_id' => $employee->id,
+            'type' => 'document',
+            'message' => $request->user()->name . ' uploaded a document: ' . $data['name'] . '.',
         ]);
 
         return redirect()->route('employees.show', ['dptid' => $dptid, 'employee' => $employee])

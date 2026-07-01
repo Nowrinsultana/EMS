@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UploadDocumentRequest;
 use App\Models\Document;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -33,6 +35,19 @@ class PersonalPanelController extends Controller
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
         ]);
+
+        $user = $request->user();
+        $admins = User::where('department_id', $user->department_id)
+            ->where(fn ($q) => $q->where('isadmin', true)->orWhere('superuser', true))
+            ->where('id', '!=', $user->id)
+            ->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'type' => 'document',
+                'message' => "{$user->name} uploaded a document: {$name}.",
+            ]);
+        }
 
         return redirect()->route('panel.index', ['dptid' => $request->route('dptid')])
             ->with('status', 'Document uploaded successfully.');

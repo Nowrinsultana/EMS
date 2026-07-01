@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\LeaveStatus;
 use App\Models\Leave;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -48,7 +50,26 @@ class MyLeaveController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('leave.my', ['dptid' => $request->route('dptid')])
+        Notification::create([
+            'user_id' => $user->id,
+            'type' => 'leave',
+            'message' => "Your leave request from {$data['start_date']} to {$data['end_date']} has been submitted.",
+        ]);
+
+        $dptid = $request->route('dptid');
+        $admins = User::where('department_id', $dptid)
+            ->where(fn ($q) => $q->where('isadmin', true)->orWhere('superuser', true))
+            ->where('id', '!=', $user->id)
+            ->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'type' => 'leave',
+                'message' => "{$user->name} submitted a leave request from {$data['start_date']} to {$data['end_date']}.",
+            ]);
+        }
+
+        return redirect()->route('leave.my', ['dptid' => $dptid])
             ->with('status', 'Leave request submitted.');
     }
 

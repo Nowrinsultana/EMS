@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\LeaveStatus;
 use App\Models\Leave;
+use App\Models\Notification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -66,6 +67,14 @@ class LeaveController extends Controller
             );
         }
 
+        if ($oldStatus !== $newStatus && $leave->staff_id !== $request->user()->id) {
+            Notification::create([
+                'user_id' => $leave->staff_id,
+                'type' => 'leave',
+                'message' => "Your leave request from {$newStartDate} to {$newEndDate} has been updated to " . $newStatus . ".",
+            ]);
+        }
+
         return redirect()->route('leave.index', ['dptid' => $dptid])
             ->with('status', 'Leave updated successfully.');
     }
@@ -84,6 +93,12 @@ class LeaveController extends Controller
                 startDate: $leave->start_date->format('Y-m-d'),
                 endDate: $leave->end_date->format('Y-m-d'),
             );
+
+            Notification::create([
+                'user_id' => $leave->staff_id,
+                'type' => 'leave',
+                'message' => 'Your leave request from ' . $leave->start_date->format('Y-m-d') . ' to ' . $leave->end_date->format('Y-m-d') . ' has been approved.',
+            ]);
         }
 
         return back()->with('status', 'Leave approved.');
@@ -105,6 +120,12 @@ class LeaveController extends Controller
                 wasApproved: true,
             );
         }
+
+        Notification::create([
+            'user_id' => $leave->staff_id,
+            'type' => 'leave',
+            'message' => 'Your leave request from ' . $leave->start_date->format('Y-m-d') . ' to ' . $leave->end_date->format('Y-m-d') . ' has been declined.',
+        ]);
 
         return back()->with('status', 'Leave declined.');
     }
