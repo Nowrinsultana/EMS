@@ -73,6 +73,7 @@
                                             }
                                         } else {
                                             $allItems = array_merge($allItems, [
+                                                ['route' => 'panel.index', 'label' => 'My Panel', 'icon' => 'panel'],
                                                 ['route' => 'employees', 'label' => 'Employees', 'icon' => 'employees'],
                                                 ['route' => 'leave', 'label' => 'Leave', 'icon' => 'leave'],
                                                 ['route' => 'attendance', 'label' => 'Attendance', 'icon' => 'attendance'],
@@ -125,7 +126,7 @@
                                     </a>
                                 @elseif (!$onPersonalPage && ($isSuperuser || $isDeptAdmin))
                                     <span class="mx-0.5 w-px h-4 bg-gray-200"></span>
-                                    <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}"
+                                    <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}"
                                        class="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-150">
                                         My Panel &rarr;
                                     </a>
@@ -257,7 +258,7 @@
                                 &larr; Admin Panel
                             </a>
                         @elseif (!$onPersonalPage && ($isSuperuser || $isDeptAdmin))
-                            <a href="{{ route('leave.my', ['dptid' => $currentDptid]) }}"
+                            <a href="{{ route('panel.index', ['dptid' => $currentDptid]) }}"
                                class="flex items-center gap-2 px-2 py-2 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg">
                                 My Panel &rarr;
                             </a>
