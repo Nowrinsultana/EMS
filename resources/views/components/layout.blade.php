@@ -195,11 +195,14 @@
                             </button>
                             <div class="relative" id="notif-dropdown">
                                 <button id="notif-dropdown-btn"
-                                        class="relative text-gray-600 hover:text-gray-900 p-1 rounded-lg hover:bg-gray-100 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                                    @if ($unreadCount > 0)
-                                        <span class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{{ min($unreadCount, 9) }}</span>
-                                    @endif
+                                        class="relative text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100 transition-colors"
+                                        style="padding: 2px; line-height: 0;">
+                                    <span style="position:relative; display:inline-block;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                        @if ($unreadCount > 0)
+                                            <span style="position:absolute; top:-7px; right:-7px; min-width:17px; height:17px; font-size:11px; font-weight:700; line-height:17px; text-align:center; padding:0 3px;" class="bg-red-500 text-white rounded-full">{{ min($unreadCount, 99) }}</span>
+                                        @endif
+                                    </span>
                                 </button>
                                 <div id="notif-dropdown-menu"
                                      class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50 max-h-96 overflow-y-auto">
