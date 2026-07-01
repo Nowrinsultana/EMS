@@ -67,7 +67,7 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi",
-            "@php -r \"echo 'PostgreSQL is configured. Ensure your database is created.';\""
+            "@php -r \"echo 'PostgreSQL is configured. Ensure your database is created.';\"",
             "@php artisan migrate --graceful --ansi"
         ],
         "pre-package-uninstall": [
