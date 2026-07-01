@@ -86,17 +86,16 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL'),
-            'host' => env('DB_HOST', 'ep-falling-meadow-ata7j32i-pooler.c-9.us-east-1.aws.neon.tech'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'neondb'),
-            'username' => env('DB_USERNAME', 'neondb_owner'),
-            'password' => env('DB_PASSWORD', 'npg_nXv4fOy9PiGT'),
-            'charset' => env('DB_CHARSET', 'utf8'),
+            'host' => 'ep-falling-meadow-ata7j32i-pooler.c-9.us-east-1.aws.neon.tech',
+            'port' => '5432',
+            'database' => 'neondb',
+            'username' => 'neondb_owner',
+            'password' => 'npg_nXv4fOy9PiGT',
+            'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => env('DB_SSLMODE', 'require'),
+            'sslmode' => 'require',
         ],
 
         'sqlsrv' => [
