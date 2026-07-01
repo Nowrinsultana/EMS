@@ -27,9 +27,11 @@ class MyAttendanceController extends Controller
         $qr = DailyQrCode::where('date', $today)->first();
         if ($qr && $qr->is_active) {
             $checkInUrl = route('attendance.scan', ['dptid' => $dptid, 'token' => $qr->check_in_token]);
-            if ($qr->check_out_token) {
-                $checkOutUrl = route('attendance.scan', ['dptid' => $dptid, 'token' => $qr->check_out_token]);
+
+            if (!$qr->check_out_token) {
+                $qr->update(['check_out_token' => bin2hex(random_bytes(32))]);
             }
+            $checkOutUrl = route('attendance.scan', ['dptid' => $dptid, 'token' => $qr->check_out_token]);
         }
 
         return view('attendance.my', compact('attendances', 'todayRecord', 'checkInUrl', 'checkOutUrl'));
