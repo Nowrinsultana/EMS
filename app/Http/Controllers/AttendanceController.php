@@ -79,34 +79,17 @@ class AttendanceController extends Controller
             ]
         );
 
-        $checkInUrl = route('attendance.scan', [
+        $qrUrl = route('attendance.scan', [
             'dptid' => $dptid,
             'token' => $qrCode->check_in_token,
         ], true);
 
-        $checkOutUrl = null;
-        if ($qrCode->check_out_token) {
-            $checkOutUrl = route('attendance.scan', [
-                'dptid' => $dptid,
-                'token' => $qrCode->check_out_token,
-            ], true);
-        }
-
-        return view('attendance.qr', compact('dptid', 'qrCode', 'checkInUrl', 'checkOutUrl'));
+        return view('attendance.qr', compact('dptid', 'qrCode', 'qrUrl'));
     }
 
     public function generateCheckOutQr(Request $request, $dptid): RedirectResponse
     {
-        $today = now()->format('Y-m-d');
-
-        $qrCode = DailyQrCode::where('date', $today)->first();
-        abort_unless($qrCode, 404);
-
-        $qrCode->update([
-            'check_out_token' => bin2hex(random_bytes(32)),
-        ]);
-
-        return back()->with('status', 'Check-out QR code generated.');
+        return back()->with('status', 'Check-out QR is no longer needed. The same QR works for both check-in and check-out.');
     }
 
     public function mark(Request $request): RedirectResponse

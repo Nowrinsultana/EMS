@@ -1,8 +1,15 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Models\DailyQrCode;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+Schedule::call(function () {
+    $today = now()->format('Y-m-d');
+    DailyQrCode::firstOrCreate(
+        ['date' => $today],
+        [
+            'check_in_token' => bin2hex(random_bytes(32)),
+            'is_active' => true,
+        ],
+    );
+})->dailyAt('00:00')->name('generate-daily-qr')->withoutOverlapping();

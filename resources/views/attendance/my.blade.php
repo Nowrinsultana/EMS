@@ -47,22 +47,27 @@
                 </div>
             @endif
 
-            @if ($checkInUrl || $checkOutUrl)
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    @if ($checkInUrl && (!$todayRecord || !$todayRecord->check_in))
-                        <div class="bg-white border-2 border-gray-200 rounded-lg p-4 flex flex-col items-center">
+            @if ($checkInUrl)
+                <div class="mb-6">
+                    <div class="bg-white border-2 border-gray-200 rounded-lg p-4 flex flex-col items-center mx-auto max-w-xs">
+                        @if (!$todayRecord || !$todayRecord->check_in)
                             <h3 class="text-sm font-medium text-gray-700 mb-3">Scan to Check In</h3>
-                            <div id="qr-checkin" class="w-48 h-48"></div>
-                            <p class="text-xs text-gray-400 mt-3">Open your phone camera and scan the QR code</p>
-                        </div>
-                    @endif
-                    @if ($checkOutUrl && $todayRecord && $todayRecord->check_in && !$todayRecord->check_out)
-                        <div class="bg-white border-2 border-gray-200 rounded-lg p-4 flex flex-col items-center">
+                        @elseif (!$todayRecord->check_out)
                             <h3 class="text-sm font-medium text-gray-700 mb-3">Scan to Check Out</h3>
-                            <div id="qr-checkout" class="w-48 h-48"></div>
-                            <p class="text-xs text-gray-400 mt-3">Open your phone camera and scan the QR code</p>
-                        </div>
-                    @endif
+                        @else
+                            <h3 class="text-sm font-medium text-gray-700 mb-3">Today's QR Code</h3>
+                        @endif
+                        <div id="qr-code" class="w-48 h-48"></div>
+                        <p class="text-xs text-gray-400 mt-3">
+                            @if (!$todayRecord || !$todayRecord->check_in)
+                                Open your phone camera and scan to check in
+                            @elseif (!$todayRecord->check_out)
+                                Open your phone camera and scan to check out
+                            @else
+                                You're all done for today
+                            @endif
+                        </p>
+                    </div>
                 </div>
             @endif
 
@@ -112,23 +117,14 @@
         </div>
     </div>
 
-    @if ($checkInUrl || $checkOutUrl)
+    @if ($checkInUrl)
         <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
         <script>
-            @if ($checkInUrl && (!$todayRecord || !$todayRecord->check_in))
-                new QRCode(document.getElementById('qr-checkin'), {
-                    text: '{{ $checkInUrl }}',
-                    width: 192,
-                    height: 192,
-                });
-            @endif
-            @if ($checkOutUrl && $todayRecord && $todayRecord->check_in && !$todayRecord->check_out)
-                new QRCode(document.getElementById('qr-checkout'), {
-                    text: '{{ $checkOutUrl }}',
-                    width: 192,
-                    height: 192,
-                });
-            @endif
+            new QRCode(document.getElementById('qr-code'), {
+                text: '{{ $checkInUrl }}',
+                width: 192,
+                height: 192,
+            });
         </script>
     @endif
 </x-layout>

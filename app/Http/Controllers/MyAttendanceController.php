@@ -22,19 +22,13 @@ class MyAttendanceController extends Controller
 
         $dptid = $request->route('dptid');
         $checkInUrl = null;
-        $checkOutUrl = null;
 
         $qr = DailyQrCode::where('date', $today)->first();
         if ($qr && $qr->is_active) {
             $checkInUrl = route('attendance.scan', ['dptid' => $dptid, 'token' => $qr->check_in_token]);
-
-            if (!$qr->check_out_token) {
-                $qr->update(['check_out_token' => bin2hex(random_bytes(32))]);
-            }
-            $checkOutUrl = route('attendance.scan', ['dptid' => $dptid, 'token' => $qr->check_out_token]);
         }
 
-        return view('attendance.my', compact('attendances', 'todayRecord', 'checkInUrl', 'checkOutUrl'));
+        return view('attendance.my', compact('attendances', 'todayRecord', 'checkInUrl'));
     }
 
     public function checkIn(Request $request): RedirectResponse
@@ -85,9 +79,7 @@ class MyAttendanceController extends Controller
 
     public function scan(Request $request, $dptid, string $token): RedirectResponse
     {
-        $qr = DailyQrCode::where('check_in_token', $token)
-            ->orWhere('check_out_token', $token)
-            ->first();
+        $qr = DailyQrCode::where('check_in_token', $token)->first();
 
         abort_unless($qr && $qr->is_active, 404);
 
@@ -98,38 +90,31 @@ class MyAttendanceController extends Controller
             return back()->with('error', 'This QR code has expired.');
         }
 
-        $isCheckIn = $qr->check_in_token === $token;
-
         $attendance = Attendance::firstOrNew(
             ['user_id' => $user->id, 'date' => $today],
             ['department_id' => $dptid],
         );
 
-        if ($isCheckIn) {
-            if ($attendance->check_in) {
-                return redirect()->route('attendance.my', ['dptid' => $dptid])
-                    ->with('error', 'Already checked in today.');
-            }
+        if (!$attendance->check_in) {
             $attendance->check_in = now();
             $attendance->qr_check_in = true;
             $attendance->status = 'present';
-        } else {
-            if (!$attendance->check_in) {
-                return redirect()->route('attendance.my', ['dptid' => $dptid])
-                    ->with('error', 'Not checked in yet.');
-            }
-            if ($attendance->check_out) {
-                return redirect()->route('attendance.my', ['dptid' => $dptid])
-                    ->with('error', 'Already checked out today.');
-            }
-            $attendance->check_out = now();
-            $attendance->qr_check_out = true;
+            $attendance->save();
+
+            return redirect()->route('attendance.my', ['dptid' => $dptid])
+                ->with('status', 'Successfully checked in via QR.');
         }
 
-        $attendance->save();
+        if (!$attendance->check_out) {
+            $attendance->check_out = now();
+            $attendance->qr_check_out = true;
+            $attendance->save();
 
-        $action = $isCheckIn ? 'checked in' : 'checked out';
+            return redirect()->route('attendance.my', ['dptid' => $dptid])
+                ->with('status', 'Successfully checked out via QR.');
+        }
+
         return redirect()->route('attendance.my', ['dptid' => $dptid])
-            ->with('status', "Successfully $action via QR.");
+            ->with('error', 'Already checked in and out today.');
     }
 }
